@@ -19,3 +19,21 @@ Constraints:
 
 2) The deck consists of at least 60 cards (intuitively, exactly 60 will return the highest probability)
 
+3) The cards are in a random order at the outset
+
+Game play:
+
+1) If the player wins the die roll, they choose whether to play first or draw a card on their first turn. It is assumed and well established that playing first gives a larger strategic advantage than drawing.
+
+2) User/player starts by drawing 7 cards off the top. 
+
+3) The player decides whether or not to keep the hand he has drawn or take a <a href="http://mtgsalvation.gamepedia.com/Mulligan#Vancouver_mulligan"Mulligan</a>
+
+4a) If the player plays first, they play immediately with the card in their hand. 
+
+4b) If the player draws, they draw a card before playing.
+
+5) Both players then draw a card at the beginning of each of their respective turns and when a card tells them to draw a card. 
+
+6) The game ends when one person's life total drops to zero, or they attempt to draw a card from their deck and can not. 
+
