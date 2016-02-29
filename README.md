@@ -27,7 +27,7 @@ Game play:
 
 2) User/player starts by drawing 7 cards off the top. 
 
-3) The player decides whether or not to keep the hand he has drawn or take a <a href="http://mtgsalvation.gamepedia.com/Mulligan#Vancouver_mulligan"Mulligan</a>
+3) The player decides whether or not to keep the hand he has drawn or take a <a href="http://mtgsalvation.gamepedia.com/Mulligan#Vancouver_mulligan">Mulligan</a>
 
 4a) If the player plays first, they play immediately with the card in their hand. 
 
