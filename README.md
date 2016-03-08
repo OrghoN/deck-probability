@@ -27,7 +27,7 @@ Game play:
 
 2) User/player starts by drawing 7 cards off the top. 
 
-3) The player decides whether or not to keep the hand he has drawn or take a <a href="http://mtgsalvation.gamepedia.com/Mulligan#Vancouver_mulligan">Mulligan</a>
+3) The player decides whether or not to keep the hand he has drawn or take a <a href="http://mtgsalvation.gamepedia.com/Mulligan#Vancouver_mulligan">mulligan</a>
 
 4a) If the player plays first, they play immediately with the card in their hand. 
 
@@ -36,4 +36,7 @@ Game play:
 5) Both players then draw a card at the beginning of each of their respective turns and when a card tells them to draw a card. 
 
 6) The game ends when one person's life total drops to zero, or they attempt to draw a card from their deck and can not. 
+
+
+NOTE for this, we will be using proability calculations for finding multiple permutations, resources for the math behind this can be found <a href="https://www.khanacademy.org/math/probability/probability-and-combinatorics-topic/probability_combinatorics/e/probability_with_perm_comb">here</a> and <a href="http://study.com/academy/lesson/how-to-calculate-the-probability-of-permuations.html">here</a>
 
