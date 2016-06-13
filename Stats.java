@@ -9,7 +9,7 @@ import java.util.ArrayList;
  */
 public class Stats {
 
-    private static final double SIMULATIONS = 100;
+    private static final double SIMULATIONS = 100000000;
     private static double perfectGame = 0;//number of perfect games
     private static double perfectHand = 0;//number of perfect hands
     private static final ArrayList<String> INOPENING = new ArrayList<>();//List of cards required in opening
@@ -22,6 +22,7 @@ public class Stats {
     public static void main(String[] args) {
         INOPENING.add("Steppe Lynx");//init list cards required 
         FIRSTDRAW.add("Atarka's Command");
+        Deck.initLists();
         
 
         for (int i = 0; i < SIMULATIONS; i++) {//loop the simulations
@@ -36,7 +37,7 @@ public class Stats {
             MULLS[] keeps track of the number of mulls and shows the difference between
             a mull to 6 and a mull to 3. A keep at 7 goes to MULLS[0].*/
             
-            if (Deck.HAND.containsAll(INOPENING) && Deck.hContainsLand(2, 6) && Deck.hContainsFetch(1,6)) {
+            if (Deck.HAND.containsAll(INOPENING) && Deck.hContainsLand(2, 6) && Deck.containsCard(Deck.HAND,Deck.FETCH_LANDS,1,6)) {
                 /*The initial if statement calls handCheck, hContainsLand, and hContains Fetch
                 per specifications of the situation. In this case, the hand must contain
                 INOPENING, at least 2 lands, and at least 1 fetch land. If it does, the 
@@ -47,7 +48,7 @@ public class Stats {
 //                System.out.println("Perfect Hand");
                 Deck.play(0);//play() accounts for fetch lands and other cards that interact with the deck on T1
                 Deck.draw(1);//T2 begins with a draw
-                if (Deck.HAND.containsAll(FIRSTDRAW) && Deck.hContainsFetch(2, 6)) {
+                if (Deck.HAND.containsAll(FIRSTDRAW) && Deck.containsCard(Deck.HAND,Deck.FETCH_LANDS,2, 6)) {
                     /*The secondary if statement checks if the hand contains the
                     required sequence of cards for the second turn. In this case, it 
                     checks for FIRSTDRAW and 2 fetch lands. If it has the required 
