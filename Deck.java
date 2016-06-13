@@ -9,7 +9,7 @@ import java.util.Random;
 /**
  *
  * @author James Cannon
- * @version 13 June 2016 11:50 A.M.
+ * @version 13 June 2016 4:00 P.M.
  */
 public class Deck {
 
@@ -296,11 +296,10 @@ anything that is not a land*/
      * @return TRUE if the element matches one of the predetermined list
      */
     static boolean isLand(List<String> list, int i) {
-        return ("Forest".equals(list.get(i))) || (isCard(list,FETCH_LANDS,i))
+        return ("Forest".equals(list.get(i))) || (isCard(list, FETCH_LANDS, i))
                 || ("Plains".equals(list.get(i))) || ("Sacred Foundry".equals(list.get(i)))
                 || ("Stomping Grounds".equals(list.get(i))) || ("Temple Garden".equals(list.get(i)));
     }
-
 
     /**
      * Under construction
@@ -316,7 +315,7 @@ anything that is not a land*/
                     HAND.remove(findCard(HAND, W_SHOCKS));
 //                    System.out.println("Hand: " + HAND + "\n\n");
                 }
-                if (containsCard(HAND,FETCH_LANDS,3, 6)) {
+                if (containsCard(HAND, FETCH_LANDS, 3, 6)) {
                     DECK.remove(findCard(DECK, W_SHOCKS));
                 }
                 break;
@@ -328,16 +327,37 @@ anything that is not a land*/
         }
     }
 
-    static boolean isCard(List<String> list, List<String> str, int i) {
+    /**
+     * Takes a card and checks to see if it is in the list of cards. All cards
+     * managed by ArrayLists.
+     *
+     * @param card ArrayList containing the card to be checked
+     * @param list List of cards to be checked against
+     * @param i index of card in List card.
+     * @return true if the card appears in the list
+     */
+    static boolean isCard(List<String> card, List<String> list, int i) {
         boolean var = false;
-        for (int j = 0; j < str.size(); j++) {
-            if (str.get(j).equals(list.get(i))) {
+        for (int j = 0; j < list.size(); j++) {
+            if (list.get(j).equals(card.get(i))) {
                 var = true;
+                break;
             }
         }
         return var;
     }
 
+    /**
+     * Takes a list and checks to see how many of a separate list are contained
+     * within
+     *
+     * @param list The list to be checked
+     * @param card The list of cards to be checked against
+     * @param lower Minimum number of objects in card that must be in list
+     * @param upper Maximum number of objects in card that must be in list
+     * @return true if a number of objects (equal to or greater than lower AND
+     * equal to or less than upper) from card appear in list.
+     */
     static boolean containsCard(List<String> list, List<String> card, int lower, int upper) {
         int count = 0;
         for (int i = 0; i < list.size(); i++) {
@@ -348,6 +368,15 @@ anything that is not a land*/
         return (count >= lower && count <= upper);
     }
 
+    /**
+     * returns the index of the first object in a List to be found in a second
+     * List
+     *
+     * @param list The list of objects being searched through
+     * @param card The list of objects being compared against.
+     * @return the first index of list where list[index] is equal to an object
+     * in card
+     */
     static int findCard(List<String> list, List<String> card) {
         int index = 999;
         for (int i = 0; i < list.size(); i++) {

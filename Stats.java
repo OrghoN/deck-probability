@@ -5,11 +5,11 @@ import java.util.ArrayList;
 /**
  *
  * @author James Cannon
- * @version 13 June 2016 - 11:12 A.M.
+ * @version 13 June 2016 - 4:00 P.M.
  */
 public class Stats {
 
-    private static final double SIMULATIONS = 100000000;
+    private static final double SIMULATIONS = 1000000;
     private static double perfectGame = 0;//number of perfect games
     private static double perfectHand = 0;//number of perfect hands
     private static final ArrayList<String> INOPENING = new ArrayList<>();//List of cards required in opening
@@ -23,7 +23,6 @@ public class Stats {
         INOPENING.add("Steppe Lynx");//init list cards required 
         FIRSTDRAW.add("Atarka's Command");
         Deck.initLists();
-        
 
         for (int i = 0; i < SIMULATIONS; i++) {//loop the simulations
 //            System.out.println("\n\nNew Game");
@@ -36,8 +35,8 @@ public class Stats {
             required one mulligan, the hand size would be six and scry() returns 1.
             MULLS[] keeps track of the number of mulls and shows the difference between
             a mull to 6 and a mull to 3. A keep at 7 goes to MULLS[0].*/
-            
-            if (Deck.HAND.containsAll(INOPENING) && Deck.hContainsLand(2, 6) && Deck.containsCard(Deck.HAND,Deck.FETCH_LANDS,1,6)) {
+
+            if (Deck.HAND.containsAll(INOPENING) && Deck.hContainsLand(2, 6) && Deck.containsCard(Deck.HAND, Deck.FETCH_LANDS, 1, 6)) {
                 /*The initial if statement calls handCheck, hContainsLand, and hContains Fetch
                 per specifications of the situation. In this case, the hand must contain
                 INOPENING, at least 2 lands, and at least 1 fetch land. If it does, the 
@@ -48,7 +47,7 @@ public class Stats {
 //                System.out.println("Perfect Hand");
                 Deck.play(0);//play() accounts for fetch lands and other cards that interact with the deck on T1
                 Deck.draw(1);//T2 begins with a draw
-                if (Deck.HAND.containsAll(FIRSTDRAW) && Deck.containsCard(Deck.HAND,Deck.FETCH_LANDS,2, 6)) {
+                if (Deck.HAND.containsAll(FIRSTDRAW) && Deck.containsCard(Deck.HAND, Deck.FETCH_LANDS, 2, 6)) {
                     /*The secondary if statement checks if the hand contains the
                     required sequence of cards for the second turn. In this case, it 
                     checks for FIRSTDRAW and 2 fetch lands. If it has the required 
@@ -60,18 +59,18 @@ public class Stats {
 
         }//for
         int total = 0;
-        for (int i = 0; i <MULLS.length; i++){
-            total+=MULLS[i];
+        for (int i = 0; i < MULLS.length; i++) {
+            total += MULLS[i];
         }
         System.out.println(perfectHand + " perfect hands");
         System.out.println(perfectGame + " perfect games");
-        System.out.printf("%.3f percent of hands mulled to 6\t",((MULLS[1]) / SIMULATIONS * 100) );
-        System.out.printf("%.3f percent of hands mulled to 5\t",((MULLS[2]) / SIMULATIONS * 100) );
-        System.out.printf("%.3f percent of hands mulled to 4\n",((MULLS[3]) / SIMULATIONS * 100) );
-        System.out.printf("%.3f percent of hands mulled to 3\t",((MULLS[4]) / SIMULATIONS * 100) );
-        System.out.printf("%.3f percent of hands mulled to 2 or less\n",(MULLS[5] / SIMULATIONS * 100) );
+        System.out.printf("%.3f percent of hands mulled to 6\t", ((MULLS[1]) / SIMULATIONS * 100));
+        System.out.printf("%.3f percent of hands mulled to 5\t", ((MULLS[2]) / SIMULATIONS * 100));
+        System.out.printf("%.3f percent of hands mulled to 4\n", ((MULLS[3]) / SIMULATIONS * 100));
+        System.out.printf("%.3f percent of hands mulled to 3\t", ((MULLS[4]) / SIMULATIONS * 100));
+        System.out.printf("%.3f percent of hands mulled to 2 or less\n", (MULLS[5] / SIMULATIONS * 100));
         System.out.printf("%.3f percent of hands were perfect\n", (perfectHand / SIMULATIONS * 100));
-        System.out.printf("%.3f percent of games were perfect\n", (perfectGame/SIMULATIONS*100));
+        System.out.printf("%.3f percent of games were perfect\n", (perfectGame / SIMULATIONS * 100));
     }
 
 }
