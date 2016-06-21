@@ -5,11 +5,11 @@ import java.util.ArrayList;
 /**
  *
  * @author James Cannon
- * @version 13 June 2016 - 4:00 P.M.
+ * @version 21 June 2016 - 4:02 P.M.
  */
 public class Stats {
 
-    private static final double SIMULATIONS = 1000000;
+    private static final double SIMULATIONS = 10000000;
     private static double perfectGame = 0;//number of perfect games
     private static double perfectHand = 0;//number of perfect hands
     private static final ArrayList<String> INOPENING = new ArrayList<>();//List of cards required in opening
@@ -36,7 +36,10 @@ public class Stats {
             MULLS[] keeps track of the number of mulls and shows the difference between
             a mull to 6 and a mull to 3. A keep at 7 goes to MULLS[0].*/
 
-            if (Deck.HAND.containsAll(INOPENING) && Deck.hContainsLand(2, 6) && Deck.containsCard(Deck.HAND, Deck.FETCH_LANDS, 1, 6)) {
+            if (Deck.HAND.containsAll(INOPENING) && Deck.containsCard(Deck.HAND, Deck.ALL_LAND, 2, 6)
+                    && Deck.containsCard(Deck.HAND, Deck.FETCH_LANDS, 1, 6) 
+                    && ( Deck.containsCard(Deck.HAND, Deck.W_SHOCKS, 1, 6)
+                    || Deck.containsCard(Deck.HAND, Deck.FETCH_LANDS, 2, 6)) ) {
                 /*The initial if statement calls handCheck, hContainsLand, and hContains Fetch
                 per specifications of the situation. In this case, the hand must contain
                 INOPENING, at least 2 lands, and at least 1 fetch land. If it does, the 
@@ -62,6 +65,7 @@ public class Stats {
         for (int i = 0; i < MULLS.length; i++) {
             total += MULLS[i];
         }
+        //output display
         System.out.println(perfectHand + " perfect hands");
         System.out.println(perfectGame + " perfect games");
         System.out.printf("%.3f percent of hands mulled to 6\t", ((MULLS[1]) / SIMULATIONS * 100));

@@ -9,7 +9,7 @@ import java.util.Random;
 /**
  *
  * @author James Cannon
- * @version 13 June 2016 4:00 P.M.
+ * @version 14 June 2016 4:02 P.M.
  */
 public class Deck {
 
@@ -18,8 +18,15 @@ public class Deck {
     public static final List<String> HAND = new ArrayList<>();//ArrayList for Hand
     public static final List<String> FETCH_LANDS = new ArrayList<>();
     public static final List<String> W_SHOCKS = new ArrayList<>();
+    public static final List<String> CREATURES = new ArrayList<>();
+    public static final List<String> ALL_LAND = new ArrayList<>();
+    public static final List<String> SHOCK_LANDS = new ArrayList<>();
+    public static final List<String> BASIC_LANDS = new ArrayList<>();
+    public static final List<String> STEPPE_LYNX = new ArrayList<>();
+    public static final List<String> FIELD = new ArrayList<>();
 
     static void initLists() {
+        STEPPE_LYNX.add("Steppe Lynx");
         FETCH_LANDS.add("Arid Mesa");
         FETCH_LANDS.add("Bloodstained Mire");
         FETCH_LANDS.add("Flooded Strand");
@@ -33,6 +40,39 @@ public class Deck {
         W_SHOCKS.add("Hallowed Fountain");
         W_SHOCKS.add("Temple Garden");
         W_SHOCKS.add("Sacred Foundry");
+        for (int i = 0; i < W_SHOCKS.size(); i ++){
+            SHOCK_LANDS.add(W_SHOCKS.get(i));
+        }
+        SHOCK_LANDS.add("Watery Grave");
+        SHOCK_LANDS.add("Steam Vents");
+        SHOCK_LANDS.add("Breeding Pool");
+        SHOCK_LANDS.add("Blood Crypt");
+        SHOCK_LANDS.add("Overgrown Tomb");
+        SHOCK_LANDS.add("Stomping Ground");
+        CREATURES.add("Burning-Tree Emissary");
+        CREATURES.add("Experiment One");
+        //No Ghor-Clan Ramapager because it is being used as a spell
+        CREATURES.add("Goblin Guide");
+        CREATURES.add("Kird Ape");
+        CREATURES.add("Reckless Bushwhacker");
+        CREATURES.add("Steppe Lynx");
+        CREATURES.add("Wild Nacatl");
+        BASIC_LANDS.add("Plains");
+        BASIC_LANDS.add("Island");
+        BASIC_LANDS.add("Swamp");
+        BASIC_LANDS.add("Mountain");
+        BASIC_LANDS.add("Forest");
+        for (int i = 0; i < FETCH_LANDS.size(); i ++){
+            ALL_LAND.add(FETCH_LANDS.get(i));
+        }
+        for (int i = 0; i < SHOCK_LANDS.size(); i ++){
+            ALL_LAND.add(SHOCK_LANDS.get(i));
+        }
+        for (int i = 0; i < BASIC_LANDS.size(); i ++){
+            ALL_LAND.add(BASIC_LANDS.get(i));
+        }
+        
+        
     }
 
     /**
@@ -41,6 +81,7 @@ public class Deck {
     static void initGame() {
         HAND.clear();
         DECK.clear();
+        FIELD.clear();
         DECK.add("Arid Mesa");
         DECK.add("Arid Mesa");
         DECK.add("Bloodstained Mire");
@@ -141,7 +182,7 @@ public class Deck {
         switch (HAND.size()) {
             case 7: {
 //                System.out.println(cardsInHand() + " cards");
-                if (hContainsLand(2, 4)) {
+                if (containsCard(HAND,ALL_LAND,2,4)) {
 //                    System.out.println("Keep");
                     break;
                 } else {
@@ -155,7 +196,7 @@ public class Deck {
             }
             case 6: {
 //                System.out.println(cardsInHand() + " cards");
-                if (hContainsLand(1, 4)) {
+                if (containsCard(HAND,ALL_LAND,1,4)) {
 //                    System.out.println("Keep");
                     break;
                 } else {
@@ -169,7 +210,7 @@ public class Deck {
             }
             case 5: {
 //                System.out.println(cardsInHand() + " cards");
-                if (hContainsLand(1, 4)) {
+                if (containsCard(HAND,ALL_LAND,1,4)) {
 //                    System.out.println("Keep");
                     break;
                 } else {
@@ -183,7 +224,7 @@ public class Deck {
             }
             case 4: {
 //                System.out.println(cardsInHand() + " cards");
-                if (hContainsLand(1, 4)) {
+                if (containsCard(HAND,ALL_LAND,1,4)) {
 //                    System.out.println("Keep");
                     break;
                 } else {
@@ -197,7 +238,8 @@ public class Deck {
             }
             case 3: {
 //                System.out.println(cardsInHand() + " cards");
-                if (hContainsLand(1, 3)) {
+                if (containsCard(HAND,ALL_LAND,1,3)) {
+                    
 //                    System.out.println("Keep");
                     break;
                 } else {
@@ -220,8 +262,9 @@ public class Deck {
 
     /**
      * scry() looks at the hand size, determines if a mulligan has been taken
-     * (hand.size() < 7) and then performs various checks to determine whether
-     * to keep the top card of the deck on top or move it to the bottom. TODO
+     * (hand.size() less than 7) and then performs various checks to determine whether
+     * to keep the top card of the deck on top or move it to the bottom. 
+     * TODO
      * apply more logic and more cases to this. Include options for creature,
      * cmc of creatures, etc. @return The number of times mulliganed. For
      * instance, if you mulled twice, you would have 5 cards in hand. This
@@ -230,9 +273,9 @@ public class Deck {
     static int scry() {
         if (HAND.size() < 7) {
             //System.out.println("Scry");
-            if (hContainsLand(1, 1)) {/* if you kept at one land, scry away 
+            if (containsCard(HAND,ALL_LAND,1,1)) {/* if you kept at one land, scry away 
 anything that is not a land*/
-                if (!isLand(DECK, 0)) {
+                if (!isCard(DECK,ALL_LAND,0)) {
 //                    System.out.println("Before Scry: " + deck);
                     scryBottom();
 //                    System.out.println("After Scry: " + deck);
@@ -244,6 +287,11 @@ anything that is not a land*/
         }
 
     }
+    
+    static boolean firstCheck(){
+        return (containsCard(HAND,ALL_LAND,2,4) && (containsCard(HAND,W_SHOCKS,1,4)
+        ||containsCard(HAND,FETCH_LANDS,2,4)));
+    }
 
     /**
      * Take the element from the "top" of the deck and move it to the "bottom"
@@ -253,41 +301,7 @@ anything that is not a land*/
         DECK.remove(0);
     }
 
-    /**
-     * hContainsLand checks whether the HAND contains a number of lands between
-     * lower and upper (inclusive)
-     *
-     * @param lower the lowest number of lands acceptable
-     * @param upper the highest number of lands acceptable
-     * @return TRUE if the number of lands in the hand falls between lower and
-     * upper (inclusive)
-     */
-    static boolean hContainsLand(int lower, int upper) {
-        int landCount = 0;
-        for (int i = 0; i < HAND.size(); i++) {
-            if (isLand(HAND, i)) {
-                landCount++;
-            }
-        }
-//        System.out.println("Hand contains: " + hand + "\nLand Count: " + landCount);
-        return (landCount >= lower && landCount <= upper);
-    }
-
-    /**
-     * Checks a list element against a predetermined list of creatures
-     *
-     * @param list The list containing the element being checked
-     * @param i the index of the element being checked
-     * @return TRUE if the element matches one of the predetermined list
-     */
-    static boolean isCreature(List<String> list, int i) {
-        return ("Burning-Tree Emissary".equals(list.get(i))) || ("Reckless Bushwhacker".equals(list.get(i)))
-                || ("Experiment One".equals(list.get(i))) || ("Ghor-Clan Rampager".equals(list.get(i)))
-                || ("Goblin Guide".equals(list.get(i))) || ("Kird Ape".equals(list.get(i)))
-                || ("Steppe Lynx".equals(list.get(i))) || ("Wild Nacatl".equals(list.get(i)));
-    }
-
-    /**
+     /**
      * Checks a list element against a predetermined list of lands. Calls the
      * similar function isFetch() as all fetch lands are lands
      *
@@ -309,15 +323,22 @@ anything that is not a land*/
     static void play(int turn) {//under construction
         switch (turn) {
             case 0: {
-                if (containsCard(HAND, W_SHOCKS, 1, 60)
-                        && containsCard(HAND, FETCH_LANDS, 1, 2)) {
+                
+                if (containsCard(HAND, W_SHOCKS, 1, 60)) {
 //                    System.out.println("Hand: " + HAND);
+                    FIELD.add(HAND.get(findCard(HAND,W_SHOCKS)));
                     HAND.remove(findCard(HAND, W_SHOCKS));
 //                    System.out.println("Hand: " + HAND + "\n\n");
                 }
-                if (containsCard(HAND, FETCH_LANDS, 3, 6)) {
-                    DECK.remove(findCard(DECK, W_SHOCKS));
+                else if (!containsCard(HAND,W_SHOCKS,3,3)){
+                    FIELD.add(DECK.get(findCard(DECK,W_SHOCKS)));
+                    DECK.remove(findCard(DECK,W_SHOCKS));
+                    HAND.remove(findCard(HAND, FETCH_LANDS));
+                    shuffle();
                 }
+                FIELD.add(HAND.get(findCard(HAND,STEPPE_LYNX)));
+                HAND.remove(findCard(HAND,STEPPE_LYNX));
+//                System.out.println("Field contains: " + FIELD);
                 break;
             }
             default: {
@@ -349,7 +370,7 @@ anything that is not a land*/
 
     /**
      * Takes a list and checks to see how many of a separate list are contained
-     * within
+     * within. (list contains card true/false)
      *
      * @param list The list to be checked
      * @param card The list of cards to be checked against
