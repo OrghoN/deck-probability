@@ -8,7 +8,7 @@ import java.util.Random;
 /**
  *
  * @author James Cannon
- * @version 22 June 2016 1:57 P.M.
+ * @version 22 June 2016 2:53 P.M.
  */
 public class Deck {
 
@@ -30,7 +30,7 @@ public class Deck {
         FETCH_LANDS.add("Bloodstained Mire");
         FETCH_LANDS.add("Flooded Strand");
         FETCH_LANDS.add("Marsh Flats");
-        FETCH_LANDS.add("Misty Rainfores");
+        FETCH_LANDS.add("Misty Rainforest");
         FETCH_LANDS.add("Polluted Delta");
         FETCH_LANDS.add("Verdant Catacombs");
         FETCH_LANDS.add("Windswept Heath");
@@ -39,7 +39,7 @@ public class Deck {
         W_SHOCKS.add("Hallowed Fountain");
         W_SHOCKS.add("Temple Garden");
         W_SHOCKS.add("Sacred Foundry");
-        for (int i = 0; i < W_SHOCKS.size(); i ++){
+        for (int i = 0; i < W_SHOCKS.size(); i++) {
             SHOCK_LANDS.add(W_SHOCKS.get(i));
         }
         SHOCK_LANDS.add("Watery Grave");
@@ -47,7 +47,7 @@ public class Deck {
         SHOCK_LANDS.add("Breeding Pool");
         SHOCK_LANDS.add("Blood Crypt");
         SHOCK_LANDS.add("Overgrown Tomb");
-        SHOCK_LANDS.add("Stomping Ground");
+        SHOCK_LANDS.add("Stomping Grounds");
         CREATURES.add("Burning-Tree Emissary");
         CREATURES.add("Experiment One");
         //No Ghor-Clan Ramapager because it is being used as a spell
@@ -61,17 +61,16 @@ public class Deck {
         BASIC_LANDS.add("Swamp");
         BASIC_LANDS.add("Mountain");
         BASIC_LANDS.add("Forest");
-        for (int i = 0; i < FETCH_LANDS.size(); i ++){
+        for (int i = 0; i < FETCH_LANDS.size(); i++) {
             ALL_LAND.add(FETCH_LANDS.get(i));
         }
-        for (int i = 0; i < SHOCK_LANDS.size(); i ++){
+        for (int i = 0; i < SHOCK_LANDS.size(); i++) {
             ALL_LAND.add(SHOCK_LANDS.get(i));
         }
-        for (int i = 0; i < BASIC_LANDS.size(); i ++){
+        for (int i = 0; i < BASIC_LANDS.size(); i++) {
             ALL_LAND.add(BASIC_LANDS.get(i));
         }
-        
-        
+
     }
 
     /**
@@ -89,7 +88,7 @@ public class Deck {
         DECK.add("Bloodstained Mire");
         DECK.add("Bloodstained Mire");
         DECK.add("Forest");
-        DECK.add("Temple Garden");
+        DECK.add("Windswept Heath");
         DECK.add("Sacred Foundry");
         DECK.add("Sacred Foundry");
         DECK.add("Stomping Grounds");
@@ -179,111 +178,87 @@ public class Deck {
      */
     static void resolveMulligans() {
 //        System.out.println("Resolve Mulligans");
+        boolean mull = true;
         switch (HAND.size()) {
             case 7: {
 //                System.out.println(HAND.size() + " cards");
-                if (containsCard(HAND,ALL_LAND,2,4)) {
+                if (containsCard(HAND, ALL_LAND, 2, 4)) {
 //                    System.out.println("Keep");
-                    break;
-                } else {
-//                    System.out.println("Mull");
-                    initGame();
-                    shuffle();
-                    draw(6);
-                    resolveMulligans();
-                    break;
+                    mull = false;
                 }
+                break;
             }
             case 6: {
 //                System.out.println(HAND.size() + " cards");
-                if (containsCard(HAND,ALL_LAND,1,4)) {
+                if (containsCard(HAND, ALL_LAND, 1, 4)) {
 //                    System.out.println("Keep");
-                    break;
-                } else {
-//                    System.out.println("Mull");
-                    initGame();
-                    shuffle();
-                    draw(5);
-                    resolveMulligans();
-                    break;
+                    mull = false;
                 }
+                break;
             }
             case 5: {
 //                System.out.println(HAND.size() + " cards");
-                if (containsCard(HAND,ALL_LAND,1,4)) {
+                if (containsCard(HAND, ALL_LAND, 1, 4)) {
 //                    System.out.println("Keep");
-                    break;
-                } else {
-//                    System.out.println("Mull");
-                    initGame();
-                    shuffle();
-                    draw(4);
-                    resolveMulligans();
-                    break;
+                    mull = false;
                 }
+                break;
             }
             case 4: {
 //                System.out.println(HAND.size() + " cards");
-                if (containsCard(HAND,ALL_LAND,1,4)) {
+                if (containsCard(HAND, ALL_LAND, 1, 4)) {
 //                    System.out.println("Keep");
-                    break;
-                } else {
-//                    System.out.println("Mull");
-                    initGame();
-                    shuffle();
-                    draw(3);
-                    resolveMulligans();
-                    break;
+                    mull = false;
                 }
+                break;
             }
             case 3: {
 //                System.out.println(HAND.size() + " cards");
-                if (containsCard(HAND,ALL_LAND,1,3)) {
-                    
+                if (containsCard(HAND, ALL_LAND, 1, 3)) {
+
 //                    System.out.println("Keep");
-                    break;
-                } else {
-//                    System.out.println("Mull");
-                    initGame();
-                    shuffle();
-                    draw(2);
-                    resolveMulligans();
-                    break;
+                    mull = false;
                 }
+                break;
             }
             default: {
 //                System.out.println("Defaulted");
+                mull = false;
                 break;
             }
-
         }
-
+        if (mull) {
+//                    System.out.println("Mull");
+            int i = (HAND.size() - 1);
+            initGame();
+            shuffle();
+            draw(i);
+            resolveMulligans();
+        }
     }
 
     /**
      * scry() looks at the hand size, determines if a mulligan has been taken
-     * (hand.size() less than 7) and then performs various checks to determine whether
-     * to keep the top card of the deck on top or move it to the bottom. 
-     * TODO
-     * apply more logic and more cases to this. Include options for creature,
-     * cmc of creatures, etc. @return The number of times mulliganed. For
-     * instance, if you mulled twice, you would have 5 cards in hand. This
+     * (hand.size() less than 7) and then performs various checks to determine
+     * whether to keep the top card of the deck on top or move it to the bottom.
+     * TODO apply more logic and more cases to this. Include options for
+     * creature, cmc of creatures, etc. @return The number of times mulliganed.
+     * For instance, if you mulled twice, you would have 5 cards in hand. This
      * returns 7-HAND.size() thus a mull to five would return 2.
      */
     static int scry() {
         if (HAND.size() < 7) {
 //            System.out.println("Scry");
 //            System.out.println("Hand: " + HAND);
-            if (containsCard(HAND,ALL_LAND,1,1)) {/* if you kept at one land, scry away 
+            if (containsCard(HAND, ALL_LAND, 1, 1)) {/* if you kept at one land, scry away
 anything that is not a land*/
-                if (!isCard(DECK,ALL_LAND,0)) {
+                if (!isCard(DECK, ALL_LAND, 0)) {
 //                    System.out.println("Before Scry: " + DECK);
                     scryBottom();
 //                    System.out.println("After Scry: " + DECK);
                 }
-            }
-            else if (containsCard(HAND,ALL_LAND,3,7)){
-                if (isCard(DECK,ALL_LAND,0)){
+            } else if (containsCard(HAND, ALL_LAND, 3, 7)) {
+                if (isCard(DECK, ALL_LAND, 0)) {
 //                    System.out.println("Before Scry: " + DECK);
                     scryBottom();
 //                    System.out.println("After Scry: " + DECK);
@@ -295,10 +270,10 @@ anything that is not a land*/
         }
 
     }
-    
-    static boolean firstCheck(){
-        return (containsCard(HAND,ALL_LAND,2,4) && (containsCard(HAND,W_SHOCKS,1,4)
-        ||containsCard(HAND,FETCH_LANDS,2,4)));
+
+    static boolean firstCheck() {
+        return (containsCard(HAND, ALL_LAND, 2, 4) && (containsCard(HAND, W_SHOCKS, 1, 4)
+                || containsCard(HAND, FETCH_LANDS, 2, 4)));
     }
 
     /**
@@ -309,7 +284,6 @@ anything that is not a land*/
         DECK.remove(0);
     }
 
-
     /**
      * Under construction
      *
@@ -319,21 +293,20 @@ anything that is not a land*/
 //        System.out.println("Play");
         switch (turn) {
             case 0: {
-                
+
                 if (containsCard(HAND, W_SHOCKS, 1, 60)) {
 //                    System.out.println("Hand: " + HAND);
-                    FIELD.add(HAND.get(findCard(HAND,W_SHOCKS)));
+                    FIELD.add(HAND.get(findCard(HAND, W_SHOCKS)));
                     HAND.remove(findCard(HAND, W_SHOCKS));
 //                    System.out.println("Hand: " + HAND);
-                }
-                else if (!containsCard(HAND,W_SHOCKS,3,3)){
-                    FIELD.add(DECK.get(findCard(DECK,W_SHOCKS)));
-                    DECK.remove(findCard(DECK,W_SHOCKS));
+                } else if (!containsCard(HAND, W_SHOCKS, 3, 3)) {
+                    FIELD.add(DECK.get(findCard(DECK, W_SHOCKS)));
+                    DECK.remove(findCard(DECK, W_SHOCKS));
                     HAND.remove(findCard(HAND, FETCH_LANDS));
                     shuffle();
                 }
-                FIELD.add(HAND.get(findCard(HAND,STEPPE_LYNX)));
-                HAND.remove(findCard(HAND,STEPPE_LYNX));
+                FIELD.add(HAND.get(findCard(HAND, STEPPE_LYNX)));
+                HAND.remove(findCard(HAND, STEPPE_LYNX));
 //                System.out.println("Field contains: " + FIELD);
                 break;
             }

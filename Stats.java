@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /**
  *
  * @author James Cannon
- * @version 22 June 2016 - 1:57 P.M.
+ * @version 22 June 2016 - 2:53 P.M.
  */
 public class Stats {
 
@@ -20,7 +20,7 @@ public class Stats {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        INOPENING.add("Steppe Lynx");//init list cards required 
+        INOPENING.add("Steppe Lynx");//init list cards required
         FIRSTDRAW.add("Atarka's Command");
         Deck.initLists();
 
@@ -36,14 +36,14 @@ public class Stats {
             a mull to 6 and a mull to 3. A keep at 7 goes to MULLS[0].*/
 
             if (Deck.HAND.containsAll(INOPENING) && Deck.containsCard(Deck.HAND, Deck.ALL_LAND, 2, 6)
-                    && Deck.containsCard(Deck.HAND, Deck.FETCH_LANDS, 1, 6) 
-                    && ( Deck.containsCard(Deck.HAND, Deck.W_SHOCKS, 1, 6)
-                    || Deck.containsCard(Deck.HAND, Deck.FETCH_LANDS, 2, 6)) ) {
+                    && Deck.containsCard(Deck.HAND, Deck.FETCH_LANDS, 1, 6)
+                    && (Deck.containsCard(Deck.HAND, Deck.W_SHOCKS, 1, 6)
+                    || Deck.containsCard(Deck.HAND, Deck.FETCH_LANDS, 2, 6))) {
                 /*The initial if statement calls handCheck, hContainsLand, and hContains Fetch
                 per specifications of the situation. In this case, the hand must contain
-                INOPENING, at least 2 lands, and at least 1 fetch land. If it does, the 
+                INOPENING, at least 2 lands, and at least 1 fetch land. If it does, the
                 variable for recording perfect opening hands, increments, otherwise,
-                the simulations is treated as a failure and a new simulation begins 
+                the simulations is treated as a failure and a new simulation begins
                 at the top of the loop.*/
                 perfectHand++;
 //                System.out.println("Perfect Hand");
@@ -51,8 +51,8 @@ public class Stats {
                 Deck.draw(1);//T2 begins with a draw
                 if (Deck.HAND.containsAll(FIRSTDRAW) && Deck.containsCard(Deck.HAND, Deck.FETCH_LANDS, 2, 6)) {
                     /*The secondary if statement checks if the hand contains the
-                    required sequence of cards for the second turn. In this case, it 
-                    checks for FIRSTDRAW and 2 fetch lands. If it has the required 
+                    required sequence of cards for the second turn. In this case, it
+                    checks for FIRSTDRAW and 2 fetch lands. If it has the required
                     cards, the variable for recording a perfect game is incremented.*/
                     perfectGame++;
 //                    System.out.println("Perfect Game");
