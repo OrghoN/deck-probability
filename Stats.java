@@ -1,11 +1,12 @@
 package stats;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 /**
  *
  * @author James Cannon
- * @version 22 June 2016 - 2:53 P.M.
+ * @version 22 June 2016 - 4:00 P.M.
  */
 public class Stats {
 
@@ -18,8 +19,9 @@ public class Stats {
 
     /**
      * @param args the command line arguments
+     * @throws java.io.FileNotFoundException
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
         INOPENING.add("Steppe Lynx");//init list cards required
         FIRSTDRAW.add("Atarka's Command");
         Deck.initLists();

@@ -1,19 +1,23 @@
 package stats;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 /**
  *
  * @author James Cannon
- * @version 22 June 2016 2:53 P.M.
+ * @version 22 June 2016 4:00 P.M.
  */
 public class Deck {
 
     private static final Random RNG = new Random();//used in shuffle()
     public static final List<String> DECK = new ArrayList<>();//ArrayList for Deck
+    public static final List<String> DECK_INITIAL = new ArrayList<>();//ArrayList for DecK Initial
     public static final List<String> HAND = new ArrayList<>();//ArrayList for Hand
     public static final List<String> FETCH_LANDS = new ArrayList<>();
     public static final List<String> W_SHOCKS = new ArrayList<>();
@@ -23,64 +27,77 @@ public class Deck {
     public static final List<String> BASIC_LANDS = new ArrayList<>();
     public static final List<String> STEPPE_LYNX = new ArrayList<>();
     public static final List<String> FIELD = new ArrayList<>();
+    public static boolean initDeck = false;
 
-    static void initLists() {
+    static void initLists() throws FileNotFoundException {
+        //String line;
+        Scanner scan = new Scanner(new File("Card Definitions.txt"));
+        String[] line;
+        while (scan.hasNextLine()) {
+            //line = scan.nextLine();
+            line = scan.nextLine().split("\t");
+            if (line.length != 2) {
+                continue;
+            }
+            line[0] = line[0].toLowerCase();
+            switch (line[0]) {
+                case "fetch land": {
+                    FETCH_LANDS.add(line[1]);
+                    ALL_LAND.add(line[1]);
+                    break;
+                }
+                case "white shock": {
+                    W_SHOCKS.add(line[1]);
+                }
+                case "other shock": {
+                    SHOCK_LANDS.add(line[1]);
+                    ALL_LAND.add(line[1]);
+                    break;
+                }
+                case "basic land": {
+                    BASIC_LANDS.add(line[1]);
+                    ALL_LAND.add(line[1]);
+                    break;
+                }
+                case "creature": {
+                    CREATURES.add(line[1]);
+                    break;
+                }
+                default: {
+                    System.err.println(line[0] + "\t" + line[1]);
+                    break;
+                }
+
+            }
+
+        }
         STEPPE_LYNX.add("Steppe Lynx");
-        FETCH_LANDS.add("Arid Mesa");
-        FETCH_LANDS.add("Bloodstained Mire");
-        FETCH_LANDS.add("Flooded Strand");
-        FETCH_LANDS.add("Marsh Flats");
-        FETCH_LANDS.add("Misty Rainforest");
-        FETCH_LANDS.add("Polluted Delta");
-        FETCH_LANDS.add("Verdant Catacombs");
-        FETCH_LANDS.add("Windswept Heath");
-        FETCH_LANDS.add("Wooded Foothills");
-        W_SHOCKS.add("Godless Shrine");
-        W_SHOCKS.add("Hallowed Fountain");
-        W_SHOCKS.add("Temple Garden");
-        W_SHOCKS.add("Sacred Foundry");
-        for (int i = 0; i < W_SHOCKS.size(); i++) {
-            SHOCK_LANDS.add(W_SHOCKS.get(i));
-        }
-        SHOCK_LANDS.add("Watery Grave");
-        SHOCK_LANDS.add("Steam Vents");
-        SHOCK_LANDS.add("Breeding Pool");
-        SHOCK_LANDS.add("Blood Crypt");
-        SHOCK_LANDS.add("Overgrown Tomb");
-        SHOCK_LANDS.add("Stomping Grounds");
-        CREATURES.add("Burning-Tree Emissary");
-        CREATURES.add("Experiment One");
-        //No Ghor-Clan Ramapager because it is being used as a spell
-        CREATURES.add("Goblin Guide");
-        CREATURES.add("Kird Ape");
-        CREATURES.add("Reckless Bushwhacker");
-        CREATURES.add("Steppe Lynx");
-        CREATURES.add("Wild Nacatl");
-        BASIC_LANDS.add("Plains");
-        BASIC_LANDS.add("Island");
-        BASIC_LANDS.add("Swamp");
-        BASIC_LANDS.add("Mountain");
-        BASIC_LANDS.add("Forest");
-        for (int i = 0; i < FETCH_LANDS.size(); i++) {
-            ALL_LAND.add(FETCH_LANDS.get(i));
-        }
-        for (int i = 0; i < SHOCK_LANDS.size(); i++) {
-            ALL_LAND.add(SHOCK_LANDS.get(i));
-        }
-        for (int i = 0; i < BASIC_LANDS.size(); i++) {
-            ALL_LAND.add(BASIC_LANDS.get(i));
-        }
-
     }
 
     /**
      * Make sure the hand and deck are void, then add the decklist to the game
      */
-    static void initGame() {
+    static void initGame() throws FileNotFoundException {
 //        System.out.println("\n\nNew Game");
         HAND.clear();
         DECK.clear();
         FIELD.clear();
+
+//        if (!initDeck) {
+//            Scanner scan = new Scanner(new File("Deck File.txt"));
+//            int quantity;
+//            String line;
+//            while (scan.hasNextLine()) {
+//                //line = scan.nextLine();
+//                quantity = scan.nextInt();
+//                line = scan.nextLine().substring(1);
+//                for (int i = 0; i < quantity; i++) {
+//                    DECK_INITIAL.add(line);
+//                }
+//            }
+//            initDeck = true;
+//        }
+//        DECK.addAll(DECK_INITIAL);
         DECK.add("Windswept Heath");
         DECK.add("Windswept Heath");
         DECK.add("Bloodstained Mire");
@@ -176,15 +193,15 @@ public class Deck {
      * the previous. TODO see if this can be looped instead of a switch. TODO
      * add cases for checking number of creatures and/or avg cmc of the hand
      */
-    static void resolveMulligans() {
+    static void resolveMulligans() throws FileNotFoundException {
 //        System.out.println("Resolve Mulligans");
-        boolean mull = true;
+
         switch (HAND.size()) {
             case 7: {
 //                System.out.println(HAND.size() + " cards");
                 if (containsCard(HAND, ALL_LAND, 2, 4)) {
 //                    System.out.println("Keep");
-                    mull = false;
+                    return;
                 }
                 break;
             }
@@ -192,7 +209,7 @@ public class Deck {
 //                System.out.println(HAND.size() + " cards");
                 if (containsCard(HAND, ALL_LAND, 1, 4)) {
 //                    System.out.println("Keep");
-                    mull = false;
+                    return;
                 }
                 break;
             }
@@ -200,7 +217,7 @@ public class Deck {
 //                System.out.println(HAND.size() + " cards");
                 if (containsCard(HAND, ALL_LAND, 1, 4)) {
 //                    System.out.println("Keep");
-                    mull = false;
+                    return;
                 }
                 break;
             }
@@ -208,7 +225,7 @@ public class Deck {
 //                System.out.println(HAND.size() + " cards");
                 if (containsCard(HAND, ALL_LAND, 1, 4)) {
 //                    System.out.println("Keep");
-                    mull = false;
+                    return;
                 }
                 break;
             }
@@ -217,24 +234,23 @@ public class Deck {
                 if (containsCard(HAND, ALL_LAND, 1, 3)) {
 
 //                    System.out.println("Keep");
-                    mull = false;
+                    return;
                 }
                 break;
             }
             default: {
 //                System.out.println("Defaulted");
-                mull = false;
-                break;
+                return;
+
             }
         }
-        if (mull) {
 //                    System.out.println("Mull");
-            int i = (HAND.size() - 1);
-            initGame();
-            shuffle();
-            draw(i);
-            resolveMulligans();
-        }
+        int i = (HAND.size() - 1);
+        initGame();
+        shuffle();
+        draw(i);
+        resolveMulligans();
+
     }
 
     /**
