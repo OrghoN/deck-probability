@@ -1,7 +1,6 @@
 package stats;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -9,7 +8,7 @@ import java.util.Random;
 /**
  *
  * @author James Cannon
- * @version 14 June 2016 4:02 P.M.
+ * @version 22 June 2016 1:57 P.M.
  */
 public class Deck {
 
@@ -79,21 +78,22 @@ public class Deck {
      * Make sure the hand and deck are void, then add the decklist to the game
      */
     static void initGame() {
+//        System.out.println("\n\nNew Game");
         HAND.clear();
         DECK.clear();
         FIELD.clear();
-        DECK.add("Arid Mesa");
-        DECK.add("Arid Mesa");
+        DECK.add("Windswept Heath");
+        DECK.add("Windswept Heath");
         DECK.add("Bloodstained Mire");
         DECK.add("Bloodstained Mire");
         DECK.add("Bloodstained Mire");
         DECK.add("Bloodstained Mire");
         DECK.add("Forest");
-        DECK.add("Plains");
+        DECK.add("Temple Garden");
         DECK.add("Sacred Foundry");
         DECK.add("Sacred Foundry");
         DECK.add("Stomping Grounds");
-        DECK.add("Stomping Grounds");
+        DECK.add("Mountain");
         DECK.add("Stomping Grounds");
         DECK.add("Temple Garden");
         DECK.add("Windswept Heath");
@@ -181,7 +181,7 @@ public class Deck {
 //        System.out.println("Resolve Mulligans");
         switch (HAND.size()) {
             case 7: {
-//                System.out.println(cardsInHand() + " cards");
+//                System.out.println(HAND.size() + " cards");
                 if (containsCard(HAND,ALL_LAND,2,4)) {
 //                    System.out.println("Keep");
                     break;
@@ -195,7 +195,7 @@ public class Deck {
                 }
             }
             case 6: {
-//                System.out.println(cardsInHand() + " cards");
+//                System.out.println(HAND.size() + " cards");
                 if (containsCard(HAND,ALL_LAND,1,4)) {
 //                    System.out.println("Keep");
                     break;
@@ -209,7 +209,7 @@ public class Deck {
                 }
             }
             case 5: {
-//                System.out.println(cardsInHand() + " cards");
+//                System.out.println(HAND.size() + " cards");
                 if (containsCard(HAND,ALL_LAND,1,4)) {
 //                    System.out.println("Keep");
                     break;
@@ -223,7 +223,7 @@ public class Deck {
                 }
             }
             case 4: {
-//                System.out.println(cardsInHand() + " cards");
+//                System.out.println(HAND.size() + " cards");
                 if (containsCard(HAND,ALL_LAND,1,4)) {
 //                    System.out.println("Keep");
                     break;
@@ -237,7 +237,7 @@ public class Deck {
                 }
             }
             case 3: {
-//                System.out.println(cardsInHand() + " cards");
+//                System.out.println(HAND.size() + " cards");
                 if (containsCard(HAND,ALL_LAND,1,3)) {
                     
 //                    System.out.println("Keep");
@@ -272,13 +272,21 @@ public class Deck {
      */
     static int scry() {
         if (HAND.size() < 7) {
-            //System.out.println("Scry");
+//            System.out.println("Scry");
+//            System.out.println("Hand: " + HAND);
             if (containsCard(HAND,ALL_LAND,1,1)) {/* if you kept at one land, scry away 
 anything that is not a land*/
                 if (!isCard(DECK,ALL_LAND,0)) {
-//                    System.out.println("Before Scry: " + deck);
+//                    System.out.println("Before Scry: " + DECK);
                     scryBottom();
-//                    System.out.println("After Scry: " + deck);
+//                    System.out.println("After Scry: " + DECK);
+                }
+            }
+            else if (containsCard(HAND,ALL_LAND,3,7)){
+                if (isCard(DECK,ALL_LAND,0)){
+//                    System.out.println("Before Scry: " + DECK);
+                    scryBottom();
+//                    System.out.println("After Scry: " + DECK);
                 }
             }
             return 7 - HAND.size();
@@ -301,19 +309,6 @@ anything that is not a land*/
         DECK.remove(0);
     }
 
-     /**
-     * Checks a list element against a predetermined list of lands. Calls the
-     * similar function isFetch() as all fetch lands are lands
-     *
-     * @param list The list containing the element being checked
-     * @param i the index of the element being checked
-     * @return TRUE if the element matches one of the predetermined list
-     */
-    static boolean isLand(List<String> list, int i) {
-        return ("Forest".equals(list.get(i))) || (isCard(list, FETCH_LANDS, i))
-                || ("Plains".equals(list.get(i))) || ("Sacred Foundry".equals(list.get(i)))
-                || ("Stomping Grounds".equals(list.get(i))) || ("Temple Garden".equals(list.get(i)));
-    }
 
     /**
      * Under construction
@@ -321,6 +316,7 @@ anything that is not a land*/
      * @param turn
      */
     static void play(int turn) {//under construction
+//        System.out.println("Play");
         switch (turn) {
             case 0: {
                 
@@ -328,7 +324,7 @@ anything that is not a land*/
 //                    System.out.println("Hand: " + HAND);
                     FIELD.add(HAND.get(findCard(HAND,W_SHOCKS)));
                     HAND.remove(findCard(HAND, W_SHOCKS));
-//                    System.out.println("Hand: " + HAND + "\n\n");
+//                    System.out.println("Hand: " + HAND);
                 }
                 else if (!containsCard(HAND,W_SHOCKS,3,3)){
                     FIELD.add(DECK.get(findCard(DECK,W_SHOCKS)));

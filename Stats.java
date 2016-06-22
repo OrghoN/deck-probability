@@ -5,11 +5,11 @@ import java.util.ArrayList;
 /**
  *
  * @author James Cannon
- * @version 21 June 2016 - 4:02 P.M.
+ * @version 22 June 2016 - 1:57 P.M.
  */
 public class Stats {
 
-    private static final double SIMULATIONS = 10000000;
+    private static final double SIMULATIONS = 1000000;
     private static double perfectGame = 0;//number of perfect games
     private static double perfectHand = 0;//number of perfect hands
     private static final ArrayList<String> INOPENING = new ArrayList<>();//List of cards required in opening
@@ -25,7 +25,6 @@ public class Stats {
         Deck.initLists();
 
         for (int i = 0; i < SIMULATIONS; i++) {//loop the simulations
-//            System.out.println("\n\nNew Game");
             Deck.initGame();//(re)set the game
             Deck.shuffle();//randomize the deck
             Deck.draw(7);//move 7 cards from the deck to the hand
@@ -55,8 +54,8 @@ public class Stats {
                     required sequence of cards for the second turn. In this case, it 
                     checks for FIRSTDRAW and 2 fetch lands. If it has the required 
                     cards, the variable for recording a perfect game is incremented.*/
-//                    System.out.println("Perfect Game");
                     perfectGame++;
+//                    System.out.println("Perfect Game");
                 }
             }
 
