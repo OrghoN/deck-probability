@@ -6,7 +6,7 @@ import java.util.ArrayList;
 /**
  *
  * @author James Cannon
- * @version 22 June 2016 - 4:00 P.M.
+ * @version 23 June 2016 - 4:00 P.M.
  */
 public class Stats {
 
@@ -49,8 +49,11 @@ public class Stats {
                 at the top of the loop.*/
                 perfectHand++;
 //                System.out.println("Perfect Hand");
+//                System.out.println("Before play: " + Deck.HAND + "\nDeck: " + Deck.DECK);
                 Deck.play(0);//play() accounts for fetch lands and other cards that interact with the deck on T1
+//                System.out.println("Ater play: " + Deck.HAND + "\nDeck: " + Deck.DECK);
                 Deck.draw(1);//T2 begins with a draw
+//                System.out.println("After Draw: " + Deck.HAND + "\nDeck: " + Deck.DECK + "\n\n");
                 if (Deck.HAND.containsAll(FIRSTDRAW) && Deck.containsCard(Deck.HAND, Deck.FETCH_LANDS, 2, 6)) {
                     /*The secondary if statement checks if the hand contains the
                     required sequence of cards for the second turn. In this case, it

@@ -16,8 +16,10 @@ Other Shock	Steam Vents
 Other Shock	Breeding Pool
 Other Shock	Blood Crypt
 Other Shock	Overgrown Tomb
-Other Shock	Stomping Grounds
+Other Shock	Stomping Ground
 Creature	Goblin Guide
+Creature	Burning-Tree Emissary
+Creature	Experiment One
 Creature	Kird Ape
 Creature	Reckless Bushwhacker
 Creature	Steppe Lynx
