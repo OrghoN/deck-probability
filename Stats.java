@@ -6,15 +6,13 @@ import java.util.ArrayList;
 /**
  *
  * @author James Cannon
- * @version 23 June 2016 - 4:00 P.M.
+ * @version 18 July 2016 - 3:45 P.M.
  */
 public class Stats {
 
-    private static final double SIMULATIONS = 1000000;
+    private static final double SIMULATIONS = 1000;
     private static double perfectGame = 0;//number of perfect games
     private static double perfectHand = 0;//number of perfect hands
-    private static final ArrayList<String> INOPENING = new ArrayList<>();//List of cards required in opening
-    private static final ArrayList<String> FIRSTDRAW = new ArrayList<>();//List of cards required in first draw
     private static final int[] MULLS = new int[6];//array for keeping track of mulligans
 
     /**
@@ -22,8 +20,6 @@ public class Stats {
      * @throws java.io.FileNotFoundException
      */
     public static void main(String[] args) throws FileNotFoundException {
-        INOPENING.add("Steppe Lynx");//init list cards required
-        FIRSTDRAW.add("Atarka's Command");
         Deck.initLists();
 
         for (int i = 0; i < SIMULATIONS; i++) {//loop the simulations
@@ -37,10 +33,7 @@ public class Stats {
             MULLS[] keeps track of the number of mulls and shows the difference between
             a mull to 6 and a mull to 3. A keep at 7 goes to MULLS[0].*/
 
-            if (Deck.HAND.containsAll(INOPENING) && Deck.containsCard(Deck.HAND, Deck.ALL_LAND, 2, 6)
-                    && Deck.containsCard(Deck.HAND, Deck.FETCH_LANDS, 1, 6)
-                    && (Deck.containsCard(Deck.HAND, Deck.W_SHOCKS, 1, 6)
-                    || Deck.containsCard(Deck.HAND, Deck.FETCH_LANDS, 2, 6))) {
+            if (Deck.pHand()) {
                 /*The initial if statement calls handCheck, hContainsLand, and hContains Fetch
                 per specifications of the situation. In this case, the hand must contain
                 INOPENING, at least 2 lands, and at least 1 fetch land. If it does, the
@@ -50,11 +43,11 @@ public class Stats {
                 perfectHand++;
 //                System.out.println("Perfect Hand");
 //                System.out.println("Before play: " + Deck.HAND + "\nDeck: " + Deck.DECK);
-                Deck.play(0);//play() accounts for fetch lands and other cards that interact with the deck on T1
+                Deck.play(1);//play() accounts for fetch lands and other cards that interact with the deck on T1
 //                System.out.println("Ater play: " + Deck.HAND + "\nDeck: " + Deck.DECK);
                 Deck.draw(1);//T2 begins with a draw
 //                System.out.println("After Draw: " + Deck.HAND + "\nDeck: " + Deck.DECK + "\n\n");
-                if (Deck.HAND.containsAll(FIRSTDRAW) && Deck.containsCard(Deck.HAND, Deck.FETCH_LANDS, 2, 6)) {
+                if (Deck.pGame()) {
                     /*The secondary if statement checks if the hand contains the
                     required sequence of cards for the second turn. In this case, it
                     checks for FIRSTDRAW and 2 fetch lands. If it has the required
@@ -62,7 +55,15 @@ public class Stats {
                     perfectGame++;
 //                    System.out.println("Perfect Game");
                 }
+            } else {
+                Deck.play(1);
+                Deck.draw(1);
             }
+            Deck.play(2);
+            Deck.draw(1);
+            Deck.play(3);
+            Deck.draw(1);
+            Deck.play(4);
 
         }//for
         int total = 0;

@@ -29,3 +29,14 @@ Basic Land	Island
 Basic Land	Swamp
 Basic Land	Mountain
 Basic Land	Forest
+Red Land	Mountain
+Red Land	Sacred Foundry
+Red Land	Blood Crypt
+Red Land	Steam Vents
+Red Land	Stomping Ground
+White Land	Plains
+Green Land	Forest
+Green Land	Stomping Ground
+Green Land	Overgrown Tomb
+Green Land	Temple Garden
+Green Land	Breeding Pool
