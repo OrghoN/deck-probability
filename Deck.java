@@ -11,7 +11,7 @@ import java.util.Scanner;
 /**
  *
  * @author James Cannon
- * @version 18 July 2016 3:45 P.M.
+ * @version 19 July 2016 1:30 P.M.
  */
 public class Deck {
 
@@ -146,6 +146,7 @@ public class Deck {
      * @param cards number of cards to be drawn
      */
     static void draw(int cards) {
+//        System.out.println("Draw " + cards);
         for (int i = 0; i < cards; i++) {
             HAND.add(DECK.get(i));
         }
@@ -265,8 +266,13 @@ anything that is not a land*/
      * @param turn
      */
     static void play(int turn) {//under construction
+//        System.out.println("Field = " + FIELD);
+//        System.out.println("Hand = " + HAND);
         int landfall = playLand();
+//        System.out.println("Play Land");
         int mana = calcMana();
+//        System.out.println("Hand = " + HAND);
+//        System.out.println("Field = " + FIELD + "\nMana = " + mana);
         switch (turn) {
             case 1: {
                 break;
@@ -355,23 +361,13 @@ anything that is not a land*/
     }
 
     /**
-     * This space is for me to go through the logic in English of the following
-     * function (If the hand has at least one land [If the field has no lands
-     * {If the hand is perfect (if the hand has a white shock play the white
-     * shock) (Otherwise, use a fetchland to play a white shock from the deck) }
-     * {Otherwise if the hand has a stomping ground play it} {Otherwise if the
-     * hand has a fetchland use it to play stomping ground} {Otherwise if the
-     * hand has a shockland, play it} {Otherwise play the first land in hand} ]
-     * [If the field has exactly one land
      *
-     * ]
-     * )
      *
      * @return
      */
     static int playLand() {
         int landfall = 0;
-        if (containsCard(HAND, ALL_LAND, 1, 60)) {
+        if (containsCard(HAND, ALL_LAND, 1, 60)) {//make sure the hand has land in it
 
             if (!containsCard(FIELD, ALL_LAND, 1, 60)) {//if there are zero lands on the field
 
@@ -423,13 +419,21 @@ anything that is not a land*/
                             FIELD.add(HAND.get(findCard(HAND, G_LANDS)));
                             HAND.remove(findCard(HAND, G_LANDS));
                             landfall = 1;
-                        }
-                    } else if (!containsCard(FIELD, R_LANDS, 1, 60)) {
-                        if (containsCard(HAND, R_LANDS, 1, 60)) {
-                            FIELD.add(HAND.get(findCard(HAND, R_LANDS)));
-                            HAND.remove(findCard(HAND, R_LANDS));
+                        } else {
+                            if (containsCard(HAND, SHOCK_LANDS, 1, 60)) {
+                                FIELD.add(HAND.get(findCard(HAND, SHOCK_LANDS)));
+                                HAND.remove(findCard(HAND, SHOCK_LANDS));
+                            } else {
+                                FIELD.add(HAND.get(findCard(HAND, ALL_LAND)));
+                                HAND.remove(findCard(HAND, ALL_LAND));
+                            }
                             landfall = 1;
                         }
+                    } else if (containsCard(HAND, R_LANDS, 1, 60)) {
+                        FIELD.add(HAND.get(findCard(HAND, R_LANDS)));
+                        HAND.remove(findCard(HAND, R_LANDS));
+                        landfall = 1;
+
                     } else {
                         if (containsCard(HAND, SHOCK_LANDS, 1, 60)) {
                             FIELD.add(HAND.get(findCard(HAND, SHOCK_LANDS)));
@@ -440,6 +444,18 @@ anything that is not a land*/
                         }
                         landfall = 1;
                     }
+                } else if (containsCard(HAND, W_SHOCKS, 1, 60)) {
+                    FIELD.add(HAND.get(findCard(HAND, W_SHOCKS)));
+                    HAND.remove(findCard(HAND, W_SHOCKS));
+                    landfall = 1;
+                } else if (containsCard(HAND, FETCH_LANDS, 1, 60)) {
+                    FIELD.add(DECK.get(findCard(DECK, W_SHOCKS)));
+                    DECK.remove(findCard(DECK, W_SHOCKS));
+                    HAND.remove(findCard(HAND, FETCH_LANDS));
+                    landfall = 2;
+                } else {
+                    FIELD.add(HAND.get(findCard(HAND, ALL_LAND)));
+                    HAND.remove(findCard(HAND, ALL_LAND));
                 }
             } else if (containsCard(FIELD, ALL_LAND, 2, 60)) {//if there are 2 or more lands on the field
                 if (containsCard(FIELD, G_LANDS, 1, 60) && containsCard(FIELD, R_LANDS, 1, 60)
@@ -467,7 +483,13 @@ anything that is not a land*/
     }
 
     static int calcMana() {
-        return 0;
+        int count = 0;
+        for (int i = 0; i < FIELD.size(); i++) {
+            if (isCard(FIELD, ALL_LAND, i)) {
+                count++;
+            }
+        }
+        return count;
     }
 
 }

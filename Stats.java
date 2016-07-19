@@ -6,14 +6,15 @@ import java.util.ArrayList;
 /**
  *
  * @author James Cannon
- * @version 18 July 2016 - 3:45 P.M.
+ * @version 19 July 2016 - 1:30 P.M.
  */
 public class Stats {
 
-    private static final double SIMULATIONS = 1000;
+    private static final double SIMULATIONS = 1000000;
     private static double perfectGame = 0;//number of perfect games
     private static double perfectHand = 0;//number of perfect hands
     private static final int[] MULLS = new int[6];//array for keeping track of mulligans
+    private static final int[] MANA = new int[5];
 
     /**
      * @param args the command line arguments
@@ -64,6 +65,7 @@ public class Stats {
             Deck.play(3);
             Deck.draw(1);
             Deck.play(4);
+            MANA[Deck.calcMana()]++;
 
         }//for
         int total = 0;
@@ -80,6 +82,11 @@ public class Stats {
         System.out.printf("%.3f percent of hands mulled to 2 or less\n", (MULLS[5] / SIMULATIONS * 100));
         System.out.printf("%.3f percent of hands were perfect\n", (perfectHand / SIMULATIONS * 100));
         System.out.printf("%.3f percent of games were perfect\n", (perfectGame / SIMULATIONS * 100));
+        System.out.printf("%.3f percent of games had 4 mana\t", ((MANA[4]) / SIMULATIONS * 100));
+        System.out.printf("%.3f percent of games had 3 mana\t", ((MANA[3]) / SIMULATIONS * 100));
+        System.out.printf("%.3f percent of games had 2 mana\n", ((MANA[2]) / SIMULATIONS * 100));
+        System.out.printf("%.3f percent of games had 1 mana\t", ((MANA[1]) / SIMULATIONS * 100));
+        System.out.printf("%.3f percent of games had 0 mana\t", ((MANA[0]) / SIMULATIONS * 100));
     }
 
 }
