@@ -490,6 +490,10 @@ anything that is not a land*/
                         FIELD.add(HAND.get(findCard(HAND, SHOCK_LANDS)));
                         HAND.remove(findCard(HAND, SHOCK_LANDS));
                         landfall = 1;
+                    } else {
+                        FIELD.add(HAND.get(findCard(HAND, ALL_LAND)));
+                        HAND.remove(findCard(HAND, ALL_LAND));
+                        landfall = 1;
                     }
                 }
             }
