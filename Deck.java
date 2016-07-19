@@ -11,7 +11,7 @@ import java.util.Scanner;
 /**
  *
  * @author James Cannon
- * @version 19 July 2016 1:30 P.M.
+ * @version 19 July 2016 4:00 P.M.
  */
 public class Deck {
 
@@ -30,6 +30,9 @@ public class Deck {
     public static final List<String> BASIC_LANDS = new ArrayList<>();
     public static final List<String> STEPPE_LYNX = new ArrayList<>();
     public static final List<String> STOMPING_GROUND = new ArrayList<>();
+    public static final List<String> TEMPLE_GARDEN = new ArrayList<>();
+    public static final List<String> SACRED_FOUNDRY = new ArrayList<>();
+    public static final List<String> BLOODSTAINED_MIRE = new ArrayList<>();
     public static final List<String> FIELD = new ArrayList<>();
     public static final List<Integer> POWER = new ArrayList<>();
     private static final ArrayList<String> INOPENING = new ArrayList<>();//List of cards required in opening
@@ -41,6 +44,9 @@ public class Deck {
         FIRSTDRAW.add("Atarka's Command");
         STEPPE_LYNX.add("Steppe Lynx");
         STOMPING_GROUND.add("Stomping Ground");
+        TEMPLE_GARDEN.add("Temple Garden");
+        SACRED_FOUNDRY.add("Sacred Foundry");
+        BLOODSTAINED_MIRE.add("Bloodstained Mire");
         Scanner scan = new Scanner(new File("Card Definitions.txt"));
         String[] line;
         while (scan.hasNextLine()) {
@@ -377,8 +383,13 @@ anything that is not a land*/
                         HAND.remove(findCard(HAND, W_SHOCKS));
                         landfall = 1;
                     } else {
-                        FIELD.add(DECK.get(findCard(DECK, W_SHOCKS)));
-                        DECK.remove(findCard(DECK, W_SHOCKS));
+                        if (!containsCard(HAND, BLOODSTAINED_MIRE, 1, 60)) {
+                            FIELD.add(DECK.get(findCard(DECK, TEMPLE_GARDEN)));
+                            DECK.remove(findCard(DECK, TEMPLE_GARDEN));
+                        } else {
+                            FIELD.add(DECK.get(findCard(DECK, SACRED_FOUNDRY)));
+                            DECK.remove(findCard(DECK, SACRED_FOUNDRY));
+                        }
                         HAND.remove(findCard(HAND, FETCH_LANDS));
                         shuffle();
                         landfall = 2;
@@ -391,6 +402,7 @@ anything that is not a land*/
                     FIELD.add(DECK.get(findCard(DECK, STOMPING_GROUND)));
                     DECK.remove(findCard(DECK, STOMPING_GROUND));
                     HAND.remove(findCard(HAND, FETCH_LANDS));
+                    shuffle();
                     landfall = 2;
                 } else if (containsCard(HAND, SHOCK_LANDS, 1, 60)) {
                     FIELD.add(HAND.get(findCard(HAND, SHOCK_LANDS)));
@@ -413,6 +425,7 @@ anything that is not a land*/
                         FIELD.add(DECK.get(findCard(DECK, STOMPING_GROUND)));
                         DECK.remove(findCard(DECK, STOMPING_GROUND));
                         HAND.remove(findCard(HAND, FETCH_LANDS));
+                        shuffle();
                         landfall = 2;
                     } else if (!containsCard(FIELD, G_LANDS, 1, 60)) {
                         if (containsCard(HAND, G_LANDS, 1, 60)) {
@@ -452,6 +465,7 @@ anything that is not a land*/
                     FIELD.add(DECK.get(findCard(DECK, W_SHOCKS)));
                     DECK.remove(findCard(DECK, W_SHOCKS));
                     HAND.remove(findCard(HAND, FETCH_LANDS));
+                    shuffle();
                     landfall = 2;
                 } else {
                     FIELD.add(HAND.get(findCard(HAND, ALL_LAND)));
@@ -469,6 +483,7 @@ anything that is not a land*/
                             FIELD.add(DECK.get(findCard(DECK, STOMPING_GROUND)));
                             DECK.remove(findCard(DECK, STOMPING_GROUND));
                             HAND.remove(findCard(HAND, FETCH_LANDS));
+                            shuffle();
                             landfall = 2;
                         }
                     } else if (containsCard(HAND, SHOCK_LANDS, 1, 60)) {
