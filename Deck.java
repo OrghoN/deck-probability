@@ -11,7 +11,7 @@ import java.util.Scanner;
 /**
  *
  * @author James Cannon
- * @version 20 July 2016 8:25 A.M.
+ * @version 19 July 2016 4:00 P.M.
  */
 public class Deck {
 
@@ -99,11 +99,8 @@ public class Deck {
                     System.err.println(line[0] + "\t" + line[1]);
                     break;
                 }
-
             }
-
         }
-
     }
 
     /**
@@ -126,9 +123,7 @@ public class Deck {
                 line = scan.nextLine().substring(1);
                 for (int i = 0; i < quantity; i++) {
                     DECK_INITIAL.add(line);
-
                 }
-
             }
             initDeck = true;
         }
@@ -141,7 +136,6 @@ public class Deck {
     static void shuffle() {
         long seed = System.nanoTime();
         Collections.shuffle(DECK, new Random(seed));
-
     }
 
     /**
@@ -204,7 +198,6 @@ public class Deck {
             }
             default: {
                 return;
-
             }
         }
         int i = (HAND.size() - 1);
@@ -212,7 +205,6 @@ public class Deck {
         shuffle();
         draw(i);
         resolveMulligans();
-
     }
 
     /**
@@ -244,7 +236,6 @@ anything that is not a land*/
         } else {
             return 0;
         }
-
     }
 
     static boolean pHand() {
@@ -374,9 +365,7 @@ anything that is not a land*/
     static int playLand() {
         int landfall = 0;
         if (containsCard(HAND, ALL_LAND, 1, 60)) {//make sure the hand has land in it
-
             if (!containsCard(FIELD, ALL_LAND, 1, 60)) {//if there are zero lands on the field
-
                 if (pHand()) {
                     if (containsCard(HAND, W_SHOCKS, 1, 60)) {
                         FIELD.add(HAND.get(findCard(HAND, W_SHOCKS)));
@@ -412,11 +401,35 @@ anything that is not a land*/
                     FIELD.add(HAND.get(findCard(HAND, ALL_LAND)));
                     HAND.remove(findCard(HAND, ALL_LAND));
                     landfall = 1;
-
                 }
-
-            } else if (containsCard(FIELD, ALL_LAND, 1, 1)) {// if there is exactly one land on the field
-                if ((!containsCard(FIELD, G_LANDS, 1, 60)) || (!containsCard(FIELD, R_LANDS, 1, 60))) {
+            } else if (containsCard(FIELD, ALL_LAND, 1, 60)) {//if there are 2 or more lands on the field
+                if (containsCard(FIELD, G_LANDS, 1, 60) && containsCard(FIELD, R_LANDS, 1, 60)
+                        && containsCard(FIELD, W_LANDS, 1, 60)) {
+                    if (containsCard(HAND, STOMPING_GROUND, 1, 60)) {
+                        FIELD.add(HAND.get(findCard(HAND, STOMPING_GROUND)));
+                        HAND.remove(findCard(HAND, STOMPING_GROUND));
+                        landfall = 1;
+                    } else if (containsCard(HAND, FETCH_LANDS, 1, 60)) {
+                        if (containsCard(DECK, STOMPING_GROUND, 1, 60)) {
+                            FIELD.add(DECK.get(findCard(DECK, STOMPING_GROUND)));
+                            DECK.remove(findCard(DECK, STOMPING_GROUND));
+                        } else {
+                            FIELD.add(DECK.get(findCard(DECK, SHOCK_LANDS)));
+                            DECK.remove(findCard(DECK, SHOCK_LANDS));
+                        }
+                        HAND.remove(findCard(HAND, FETCH_LANDS));
+                        shuffle();
+                        landfall = 2;
+                    } else if (containsCard(HAND, SHOCK_LANDS, 1, 60)) {
+                        FIELD.add(HAND.get(findCard(HAND, SHOCK_LANDS)));
+                        HAND.remove(findCard(HAND, SHOCK_LANDS));
+                        landfall = 1;
+                    } else {
+                        FIELD.add(HAND.get(findCard(HAND, ALL_LAND)));
+                        HAND.remove(findCard(HAND, ALL_LAND));
+                        landfall = 1;
+                    }
+                } else if ((!containsCard(FIELD, G_LANDS, 1, 60)) || (!containsCard(FIELD, R_LANDS, 1, 60))) {
                     if (containsCard(HAND, STOMPING_GROUND, 1, 60)) {
                         FIELD.add(HAND.get(findCard(HAND, STOMPING_GROUND)));
                         HAND.remove(findCard(HAND, STOMPING_GROUND));
@@ -471,34 +484,6 @@ anything that is not a land*/
                     FIELD.add(HAND.get(findCard(HAND, ALL_LAND)));
                     HAND.remove(findCard(HAND, ALL_LAND));
                 }
-            } else if (containsCard(FIELD, ALL_LAND, 2, 60)) {//if there are 2 or more lands on the field
-                if (containsCard(FIELD, G_LANDS, 1, 60) && containsCard(FIELD, R_LANDS, 1, 60)
-                        && containsCard(FIELD, W_LANDS, 1, 60)) {
-                    if (containsCard(HAND, STOMPING_GROUND, 1, 60)) {
-                        FIELD.add(HAND.get(findCard(HAND, STOMPING_GROUND)));
-                        HAND.remove(findCard(HAND, STOMPING_GROUND));
-                        landfall = 1;
-                    } else if (containsCard(HAND, FETCH_LANDS, 1, 60)) {
-                        if (containsCard(DECK, STOMPING_GROUND, 1, 60)) {
-                            FIELD.add(DECK.get(findCard(DECK, STOMPING_GROUND)));
-                            DECK.remove(findCard(DECK, STOMPING_GROUND));
-                        } else {
-                            FIELD.add(DECK.get(findCard(DECK, SHOCK_LANDS)));
-                            DECK.remove(findCard(DECK, SHOCK_LANDS));
-                        }
-                        HAND.remove(findCard(HAND, FETCH_LANDS));
-                        shuffle();
-                        landfall = 2;
-                    } else if (containsCard(HAND, SHOCK_LANDS, 1, 60)) {
-                        FIELD.add(HAND.get(findCard(HAND, SHOCK_LANDS)));
-                        HAND.remove(findCard(HAND, SHOCK_LANDS));
-                        landfall = 1;
-                    } else {
-                        FIELD.add(HAND.get(findCard(HAND, ALL_LAND)));
-                        HAND.remove(findCard(HAND, ALL_LAND));
-                        landfall = 1;
-                    }
-                }
             }
         }
         return landfall;
@@ -513,5 +498,4 @@ anything that is not a land*/
         }
         return count;
     }
-
 }
