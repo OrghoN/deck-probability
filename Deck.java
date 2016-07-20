@@ -11,7 +11,7 @@ import java.util.Scanner;
 /**
  *
  * @author James Cannon
- * @version 19 July 2016 4:00 P.M.
+ * @version 20 July 2016 4:00 P.M.
  */
 public class Deck {
 
@@ -483,6 +483,7 @@ anything that is not a land*/
                 } else {
                     FIELD.add(HAND.get(findCard(HAND, ALL_LAND)));
                     HAND.remove(findCard(HAND, ALL_LAND));
+                    landfall = 1;
                 }
             }
         }
