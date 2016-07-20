@@ -11,7 +11,7 @@ import java.util.Scanner;
 /**
  *
  * @author James Cannon
- * @version 19 July 2016 4:00 P.M.
+ * @version 20 July 2016 8:25 A.M.
  */
 public class Deck {
 
@@ -482,10 +482,13 @@ anything that is not a land*/
                         if (containsCard(DECK, STOMPING_GROUND, 1, 60)) {
                             FIELD.add(DECK.get(findCard(DECK, STOMPING_GROUND)));
                             DECK.remove(findCard(DECK, STOMPING_GROUND));
-                            HAND.remove(findCard(HAND, FETCH_LANDS));
-                            shuffle();
-                            landfall = 2;
+                        } else {
+                            FIELD.add(DECK.get(findCard(DECK, SHOCK_LANDS)));
+                            DECK.remove(findCard(DECK, SHOCK_LANDS));
                         }
+                        HAND.remove(findCard(HAND, FETCH_LANDS));
+                        shuffle();
+                        landfall = 2;
                     } else if (containsCard(HAND, SHOCK_LANDS, 1, 60)) {
                         FIELD.add(HAND.get(findCard(HAND, SHOCK_LANDS)));
                         HAND.remove(findCard(HAND, SHOCK_LANDS));
