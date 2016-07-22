@@ -11,7 +11,7 @@ import java.util.Scanner;
 /**
  *
  * @author James Cannon
- * @version 22 July 2016 1:00 P.M.
+ * @version 22 July 2016 2:10 P.M.
  */
 public class Deck {
 
@@ -28,11 +28,6 @@ public class Deck {
     public static final List<String> ALL_LAND = new ArrayList<>();
     public static final List<String> SHOCK_LANDS = new ArrayList<>();
     public static final List<String> BASIC_LANDS = new ArrayList<>();
-    public static final List<String> STEPPE_LYNX = new ArrayList<>();
-    public static final List<String> STOMPING_GROUND = new ArrayList<>();
-    public static final List<String> TEMPLE_GARDEN = new ArrayList<>();
-    public static final List<String> SACRED_FOUNDRY = new ArrayList<>();
-    public static final List<String> BLOODSTAINED_MIRE = new ArrayList<>();
     public static final List<String> FIELD = new ArrayList<>();
     public static final List<Integer> POWER = new ArrayList<>();
     private static final ArrayList<String> INOPENING = new ArrayList<>();//List of cards required in opening
@@ -42,11 +37,6 @@ public class Deck {
     static void initLists() throws FileNotFoundException {
         INOPENING.add("Steppe Lynx");//init list cards required
         FIRSTDRAW.add("Atarka's Command");
-        STEPPE_LYNX.add("Steppe Lynx");
-        STOMPING_GROUND.add("Stomping Ground");
-        TEMPLE_GARDEN.add("Temple Garden");
-        SACRED_FOUNDRY.add("Sacred Foundry");
-        BLOODSTAINED_MIRE.add("Bloodstained Mire");
         Scanner scan = new Scanner(new File("Card Definitions.txt"));
         String[] line;
         while (scan.hasNextLine()) {
@@ -148,10 +138,7 @@ public class Deck {
     static void draw(int cards) {
 //        System.out.println("Draw " + cards);
         for (int i = 0; i < cards; i++) {
-            HAND.add(DECK.get(i));
-        }
-        for (int j = 0; j < cards; j++) {
-            DECK.remove(0);
+            HAND.add(DECK.remove(i));
         }
     }
 
@@ -165,40 +152,34 @@ public class Deck {
      */
     static void resolveMulligans() throws FileNotFoundException {
         switch (HAND.size()) {
-            case 7: {
+            case 7:
                 if (containsCard(HAND, ALL_LAND, 2, 4)
-                        && (containsCard(HAND, CREATURES, 2, 5) || containsCard(HAND, STEPPE_LYNX, 1, 1))) {
+                        && (containsCard(HAND, CREATURES, 2, 5) || containsCard(HAND, "Steppe Lynx", 1, 1))) {
                     return;
                 }
                 break;
-            }
-            case 6: {
+            case 6:
                 if (containsCard(HAND, ALL_LAND, 1, 4) && containsCard(HAND, CREATURES, 1, 5)) {
                     return;
                 }
                 break;
-            }
-            case 5: {
+            case 5:
                 if (containsCard(HAND, ALL_LAND, 1, 4)) {
                     return;
                 }
                 break;
-            }
-            case 4: {
+            case 4:
                 if (containsCard(HAND, ALL_LAND, 1, 4)) {
                     return;
                 }
                 break;
-            }
-            case 3: {
+            case 3:
                 if (containsCard(HAND, ALL_LAND, 1, 3)) {
                     return;
                 }
                 break;
-            }
-            default: {
+            default:
                 return;
-            }
         }
         int i = (HAND.size() - 1);
         initGame();
@@ -237,7 +218,10 @@ anything that is not a land*/
             return 0;
         }
     }
-
+/**
+ * TODO Comment
+ * @return 
+ */
     static boolean pHand() {
         return (HAND.containsAll(INOPENING) && containsCard(HAND, ALL_LAND, 2, 6)
                 && containsCard(HAND, FETCH_LANDS, 1, 6)
@@ -245,6 +229,10 @@ anything that is not a land*/
                 || containsCard(Deck.HAND, FETCH_LANDS, 2, 6)));
     }
 
+    /**
+     * TODO Comment
+     * @return 
+     */
     static boolean pGame() {
         return (HAND.containsAll(FIRSTDRAW) && containsCard(HAND, FETCH_LANDS, 2, 6));
     }
@@ -253,8 +241,7 @@ anything that is not a land*/
      * Take the element from the "top" of the deck and move it to the "bottom"
      */
     static void scryBottom() {
-        DECK.add(DECK.get(0));
-        DECK.remove(0);
+        DECK.add(DECK.remove(0));
     }
 
     /**
@@ -263,15 +250,11 @@ anything that is not a land*/
      * @param turn
      */
     static void play(int turn) {//under construction
-//        System.out.println("Field = " + FIELD);
-//        System.out.println("Hand = " + HAND);
         int landfall = playLand();
-//        System.out.println("Play Land");
         int mana = calcMana();
-//        System.out.println("Hand = " + HAND);
-//        System.out.println("Field = " + FIELD + "\nMana = " + mana);
-        mana = playCreature(mana);
+        mana = playHaste(mana);
         int power = calcPower(landfall);
+        mana = playCreature(mana);
     }
 
     /**
@@ -296,6 +279,20 @@ anything that is not a land*/
         }
         return var;
     }
+/**
+ * TODO: Comment
+ * @param card
+ * @param list
+ * @param i
+ * @return 
+ */
+    static boolean isCard(List<String> card, String list, int i) {
+        boolean var = false;
+        if (list.equals(card.get(i))) {
+            var = true;
+        }
+        return var;
+    }
 
     /**
      * Takes a list and checks to see how many of a separate list are contained
@@ -309,6 +306,24 @@ anything that is not a land*/
      * equal to or less than upper) from card appear in list.
      */
     static boolean containsCard(List<String> list, List<String> card, int lower, int upper) {
+        int count = 0;
+        for (int i = 0; i < list.size(); i++) {
+            if (isCard(list, card, i)) {
+                count++;
+            }
+        }
+        return (count >= lower && count <= upper);
+    }
+    
+/**
+ * TODO: Comment
+ * @param list
+ * @param card
+ * @param lower
+ * @param upper
+ * @return 
+ */
+    static boolean containsCard(List<String> list, String card, int lower, int upper) {
         int count = 0;
         for (int i = 0; i < list.size(); i++) {
             if (isCard(list, card, i)) {
@@ -340,10 +355,30 @@ anything that is not a land*/
         }
         return index;
     }
+    
+/**
+ * TODO: Comment
+ * @param list
+ * @param card
+ * @return 
+ */
+    static int findCard(List<String> list, String card) {
+        int index = 999;
+        for (int i = 0; i < list.size(); i++) {
+            if (isCard(list, card, i)) {
+                index = i;
+                break;
+            }
+        }
+        if (index == 999) {
+            System.out.println("Card: " + card + "not found in " + list + "\n\n");
+        }
+        return index;
+    }
 
     /**
      *
-     *
+     *TODO:Comment
      * @return
      */
     static int playLand() {
@@ -352,130 +387,111 @@ anything that is not a land*/
             if (!containsCard(FIELD, ALL_LAND, 1, FIELD.size())) {//if there are zero lands on the field
                 if (pHand()) {
                     if (containsCard(HAND, W_SHOCKS, 1, HAND.size())) {
-                        FIELD.add(HAND.get(findCard(HAND, W_SHOCKS)));
-                        HAND.remove(findCard(HAND, W_SHOCKS));
+                        FIELD.add(HAND.remove(findCard(HAND, W_SHOCKS)));
                         landfall = 1;
                     } else {
-                        if (!containsCard(HAND, BLOODSTAINED_MIRE, 1, HAND.size())) {
-                            FIELD.add(DECK.get(findCard(DECK, TEMPLE_GARDEN)));
-                            DECK.remove(findCard(DECK, TEMPLE_GARDEN));
+                        if (!containsCard(HAND, "Bloodstained Mire", 1, HAND.size())) {
+                            FIELD.add(DECK.remove(findCard(DECK, "Temple Garden")));
                         } else {
-                            FIELD.add(DECK.get(findCard(DECK, SACRED_FOUNDRY)));
-                            DECK.remove(findCard(DECK, SACRED_FOUNDRY));
+                            FIELD.add(DECK.remove(findCard(DECK, "Sacred Foundry")));
                         }
                         HAND.remove(findCard(HAND, FETCH_LANDS));
                         shuffle();
                         landfall = 2;
                     }
-                } else if (containsCard(HAND, STOMPING_GROUND, 1, HAND.size())) {
-                    FIELD.add(HAND.get(findCard(HAND, STOMPING_GROUND)));
-                    HAND.remove(findCard(HAND, STOMPING_GROUND));
+                } else if (containsCard(HAND, "Stomping Ground", 1, HAND.size())) {
+                    FIELD.add(HAND.remove(findCard(HAND, "Stomping Ground")));
                     landfall = 1;
                 } else if (containsCard(HAND, FETCH_LANDS, 1, HAND.size())) {
-                    FIELD.add(DECK.get(findCard(DECK, STOMPING_GROUND)));
-                    DECK.remove(findCard(DECK, STOMPING_GROUND));
+                    FIELD.add(DECK.remove(findCard(DECK, "Stomping Ground")));
                     HAND.remove(findCard(HAND, FETCH_LANDS));
                     shuffle();
                     landfall = 2;
                 } else if (containsCard(HAND, SHOCK_LANDS, 1, HAND.size())) {
-                    FIELD.add(HAND.get(findCard(HAND, SHOCK_LANDS)));
-                    HAND.remove(findCard(HAND, SHOCK_LANDS));
+                    FIELD.add(HAND.remove(findCard(HAND, SHOCK_LANDS)));
                     landfall = 1;
                 } else {
-                    FIELD.add(HAND.get(findCard(HAND, ALL_LAND)));
-                    HAND.remove(findCard(HAND, ALL_LAND));
+                    FIELD.add(HAND.remove(findCard(HAND, ALL_LAND)));
                     landfall = 1;
                 }
             } else if (containsCard(FIELD, ALL_LAND, 1, FIELD.size())) {//if there are 2 or more lands on the field
                 if (containsCard(FIELD, G_LANDS, 1, FIELD.size())
                         && containsCard(FIELD, R_LANDS, 1, FIELD.size())
                         && containsCard(FIELD, W_LANDS, 1, FIELD.size())) {
-                    if (containsCard(HAND, STOMPING_GROUND, 1, HAND.size())) {
-                        FIELD.add(HAND.get(findCard(HAND, STOMPING_GROUND)));
-                        HAND.remove(findCard(HAND, STOMPING_GROUND));
+                    if (containsCard(HAND, "Stomping Ground", 1, HAND.size())) {
+                        FIELD.add(HAND.remove(findCard(HAND, "Stomping Ground")));
                         landfall = 1;
                     } else if (containsCard(HAND, FETCH_LANDS, 1, HAND.size())) {
-                        if (containsCard(DECK, STOMPING_GROUND, 1, DECK.size())) {
-                            FIELD.add(DECK.get(findCard(DECK, STOMPING_GROUND)));
-                            DECK.remove(findCard(DECK, STOMPING_GROUND));
+                        if (containsCard(DECK, "Stomping Ground", 1, DECK.size())) {
+                            FIELD.add(DECK.remove(findCard(DECK, "Stomping Ground")));
                         } else {
-                            FIELD.add(DECK.get(findCard(DECK, SHOCK_LANDS)));
-                            DECK.remove(findCard(DECK, SHOCK_LANDS));
+                            FIELD.add(DECK.remove(findCard(DECK, SHOCK_LANDS)));
                         }
                         HAND.remove(findCard(HAND, FETCH_LANDS));
                         shuffle();
                         landfall = 2;
                     } else if (containsCard(HAND, SHOCK_LANDS, 1, HAND.size())) {
-                        FIELD.add(HAND.get(findCard(HAND, SHOCK_LANDS)));
-                        HAND.remove(findCard(HAND, SHOCK_LANDS));
+                        FIELD.add(HAND.remove(findCard(HAND, SHOCK_LANDS)));
                         landfall = 1;
                     } else {
-                        FIELD.add(HAND.get(findCard(HAND, ALL_LAND)));
-                        HAND.remove(findCard(HAND, ALL_LAND));
+                        FIELD.add(HAND.remove(findCard(HAND, ALL_LAND)));
                         landfall = 1;
                     }
                 } else if ((!containsCard(FIELD, G_LANDS, 1, FIELD.size()))
                         || (!containsCard(FIELD, R_LANDS, 1, FIELD.size()))) {
-                    if (containsCard(HAND, STOMPING_GROUND, 1, HAND.size())) {
-                        FIELD.add(HAND.get(findCard(HAND, STOMPING_GROUND)));
-                        HAND.remove(findCard(HAND, STOMPING_GROUND));
+                    if (containsCard(HAND, "Stomping Ground", 1, HAND.size())) {
+                        FIELD.add(HAND.remove(findCard(HAND, "Stomping Ground")));
                         landfall = 1;
                     } else if (containsCard(HAND, FETCH_LANDS, 1, HAND.size())) {
-                        FIELD.add(DECK.get(findCard(DECK, STOMPING_GROUND)));
-                        DECK.remove(findCard(DECK, STOMPING_GROUND));
+                        FIELD.add(DECK.remove(findCard(DECK, "Stomping Ground")));
                         HAND.remove(findCard(HAND, FETCH_LANDS));
                         shuffle();
                         landfall = 2;
                     } else if (!containsCard(FIELD, G_LANDS, 1, FIELD.size())) {
                         if (containsCard(HAND, G_LANDS, 1, HAND.size())) {
-                            FIELD.add(HAND.get(findCard(HAND, G_LANDS)));
-                            HAND.remove(findCard(HAND, G_LANDS));
+                            FIELD.add(HAND.remove(findCard(HAND, G_LANDS)));
                             landfall = 1;
                         } else {
                             if (containsCard(HAND, SHOCK_LANDS, 1, HAND.size())) {
-                                FIELD.add(HAND.get(findCard(HAND, SHOCK_LANDS)));
-                                HAND.remove(findCard(HAND, SHOCK_LANDS));
+                                FIELD.add(HAND.remove(findCard(HAND, SHOCK_LANDS)));
                             } else {
-                                FIELD.add(HAND.get(findCard(HAND, ALL_LAND)));
-                                HAND.remove(findCard(HAND, ALL_LAND));
+                                FIELD.add(HAND.remove(findCard(HAND, ALL_LAND)));
                             }
                             landfall = 1;
                         }
                     } else if (containsCard(HAND, R_LANDS, 1, HAND.size())) {
-                        FIELD.add(HAND.get(findCard(HAND, R_LANDS)));
-                        HAND.remove(findCard(HAND, R_LANDS));
+                        FIELD.add(HAND.remove(findCard(HAND, R_LANDS)));
                         landfall = 1;
 
                     } else {
                         if (containsCard(HAND, SHOCK_LANDS, 1, HAND.size())) {
-                            FIELD.add(HAND.get(findCard(HAND, SHOCK_LANDS)));
-                            HAND.remove(findCard(HAND, SHOCK_LANDS));
+                            FIELD.add(HAND.remove(findCard(HAND, SHOCK_LANDS)));
                         } else {
-                            FIELD.add(HAND.get(findCard(HAND, ALL_LAND)));
-                            HAND.remove(findCard(HAND, ALL_LAND));
+                            FIELD.add(HAND.remove(findCard(HAND, ALL_LAND)));
                         }
                         landfall = 1;
                     }
                 } else if (containsCard(HAND, W_SHOCKS, 1, HAND.size())) {
-                    FIELD.add(HAND.get(findCard(HAND, W_SHOCKS)));
-                    HAND.remove(findCard(HAND, W_SHOCKS));
+                    FIELD.add(HAND.remove(findCard(HAND, W_SHOCKS)));
                     landfall = 1;
                 } else if (containsCard(HAND, FETCH_LANDS, 1, HAND.size())) {
-                    FIELD.add(DECK.get(findCard(DECK, W_SHOCKS)));
-                    DECK.remove(findCard(DECK, W_SHOCKS));
+                    FIELD.add(DECK.remove(findCard(DECK, W_SHOCKS)));
                     HAND.remove(findCard(HAND, FETCH_LANDS));
                     shuffle();
                     landfall = 2;
                 } else {
-                    FIELD.add(HAND.get(findCard(HAND, ALL_LAND)));
-                    HAND.remove(findCard(HAND, ALL_LAND));
+                    FIELD.add(HAND.remove(findCard(HAND, ALL_LAND)));
                     landfall = 1;
                 }
             }
         }
         return landfall;
     }
-
+    
+/**
+ * TODO: comment
+ * @return 
+ */
     static int calcMana() {
         int count = 0;
         for (int i = 0; i < FIELD.size(); i++) {
@@ -486,13 +502,31 @@ anything that is not a land*/
         return count;
     }
 
+    /**
+     * Todo
+     * @param mana
+     * @return 
+     */
     static int playCreature(int mana) {
+        return mana;
+    }
+    
+/**
+ * Todo
+ * @param mana
+ * @return 
+ */
+    static int playHaste(int mana) {
+        switch (mana) {
+            case 1: {
+
+            }
+        }
         return mana;
     }
 
     static int calcPower(int landfall) {
         int power = 0;
-
         for (int i = 0; i < FIELD.size(); i++) {
             if (isCard(FIELD, CREATURES, i)) {
                 switch (FIELD.get(i)) {
@@ -537,12 +571,9 @@ anything that is not a land*/
                         }
                         break;
                     }
-
                 }
-
             }
         }
-
         return power;
     }
 }
