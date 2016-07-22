@@ -11,7 +11,7 @@ import java.util.Scanner;
 /**
  *
  * @author James Cannon
- * @version 22 July 2016 2:10 P.M.
+ * @version 22 July 2016 3:55 P.M.
  */
 public class Deck {
 
@@ -193,7 +193,7 @@ public class Deck {
      * (hand.size() less than 7) and then performs various checks to determine
      * whether to keep the top card of the deck on top or move it to the bottom.
      * TODO apply more logic and more cases to this. Include options for
-     * creature, cmc of creatures, etc. @return The number of times mulliganed.
+     * creature, cmc (converted mana cost) of creatures, etc. @return The number of times mulliganed.
      * For instance, if you mulled twice, you would have 5 cards in hand. This
      * returns 7-HAND.size() thus a mull to five would return 2.
      */
@@ -270,14 +270,8 @@ anything that is not a land*/
      * against all elements in CREATURES
      */
     static boolean isCard(List<String> card, List<String> list, int i) {
-        boolean var = false;
-        for (int j = 0; j < list.size(); j++) {
-            if (list.get(j).equals(card.get(i))) {
-                var = true;
-                break;
-            }
-        }
-        return var;
+        return list.indexOf(card.get(i))>-1;
+        
     }
 /**
  * TODO: Comment
@@ -287,16 +281,12 @@ anything that is not a land*/
  * @return 
  */
     static boolean isCard(List<String> card, String list, int i) {
-        boolean var = false;
-        if (list.equals(card.get(i))) {
-            var = true;
-        }
-        return var;
+        return (list.equals(card.get(i)));
     }
 
     /**
-     * Takes a list and checks to see how many of a separate list are contained
-     * within. (list contains card true/false)
+     * Takes a list and checks to see how many elements of a separate list are contained
+     * within. (list[] contains card[] true/false)
      *
      * @param list The list to be checked
      * @param card The list of cards to be checked against
@@ -316,12 +306,14 @@ anything that is not a land*/
     }
     
 /**
- * TODO: Comment
- * @param list
- * @param card
- * @param lower
- * @param upper
- * @return 
+ * Checks to see how many of an element, card, are contained in a list, list. 
+ * Returns true if the number of elements in the list are between lower and upper (inclusive)
+ * @param list list to be checked
+ * @param card element to be checked for in the list
+ * @param lower lower bound (inclusive)
+ * @param upper upper bound (inclusive)
+ * @return TRUE if card appears in list >= lower number of times && <= upper number
+ * of times 
  */
     static boolean containsCard(List<String> list, String card, int lower, int upper) {
         int count = 0;
@@ -334,51 +326,43 @@ anything that is not a land*/
     }
 
     /**
-     * returns the index of the first object in a List to be found in a second
-     * List
+     * returns the index of the first object in a List (list) to be found in a second
+     * List (card)
      *
      * @param list The list of objects being searched through
      * @param card The list of objects being compared against.
      * @return the first index of list where list[index] is equal to an object
      * in card
+     * 
+     * TODO: Fix this. Horribly inefficient
      */
-    static int findCard(List<String> list, List<String> card) {
-        int index = 999;
+    static int findCard(List<String> list, List<String> cards) {
+        int index = -1;
         for (int i = 0; i < list.size(); i++) {
-            if (isCard(list, card, i)) {
+            if (isCard(list, cards, i)) {
                 index = i;
                 break;
             }
         }
-        if (index == 999) {
-            System.out.println("Card: " + card + "not found in " + list + "\n\n");
+        if (index == -1) {
+            System.out.println("Cards: " + cards + "not found in " + list + "\n\n");
         }
         return index;
     }
     
 /**
- * TODO: Comment
- * @param list
- * @param card
- * @return 
+ * Returns the index of an element, card, in a list, list
+ * @param list list of card to be checked through
+ * @param card card to be checked for
+ * @return index of the the card in the list 
  */
     static int findCard(List<String> list, String card) {
-        int index = 999;
-        for (int i = 0; i < list.size(); i++) {
-            if (isCard(list, card, i)) {
-                index = i;
-                break;
-            }
-        }
-        if (index == 999) {
-            System.out.println("Card: " + card + "not found in " + list + "\n\n");
-        }
-        return index;
+        return list.indexOf(card);
     }
 
     /**
      *
-     *TODO:Comment
+     *TODO:Comment, extensively
      * @return
      */
     static int playLand() {
@@ -489,7 +473,7 @@ anything that is not a land*/
     }
     
 /**
- * TODO: comment
+ * TODO: Comment
  * @return 
  */
     static int calcMana() {
@@ -503,7 +487,7 @@ anything that is not a land*/
     }
 
     /**
-     * Todo
+     * TODO: Write code
      * @param mana
      * @return 
      */
@@ -512,7 +496,7 @@ anything that is not a land*/
     }
     
 /**
- * Todo
+ * TODO: Write code
  * @param mana
  * @return 
  */
@@ -525,6 +509,11 @@ anything that is not a land*/
         return mana;
     }
 
+    /**
+     * TODO: Comment
+     * @param landfall
+     * @return 
+     */
     static int calcPower(int landfall) {
         int power = 0;
         for (int i = 0; i < FIELD.size(); i++) {
