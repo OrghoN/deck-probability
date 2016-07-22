@@ -11,30 +11,30 @@ import java.util.Scanner;
 /**
  *
  * @author James Cannon
- * @version 20 July 2016 4:00 P.M.
+ * @version 22 July 2016 11:05 A.M
  */
 public class Deck {
 
     private static final Random RNG = new Random();//used in shuffle()
     public static final List<String> DECK = new ArrayList<>();//ArrayList for Deck
-    public static final List<String> DECK_INITIAL = new ArrayList<>();//ArrayList for DecK Initial
+    public static final List<String> DECK_INITIAL = new ArrayList<>();//ArrayList for Deck Initial
     public static final List<String> HAND = new ArrayList<>();//ArrayList for Hand
-    public static final List<String> FETCH_LANDS = new ArrayList<>();
-    public static final List<String> W_SHOCKS = new ArrayList<>();
-    public static final List<String> W_LANDS = new ArrayList<>();
-    public static final List<String> G_LANDS = new ArrayList<>();
-    public static final List<String> R_LANDS = new ArrayList<>();
-    public static final List<String> CREATURES = new ArrayList<>();
-    public static final List<String> ALL_LAND = new ArrayList<>();
-    public static final List<String> SHOCK_LANDS = new ArrayList<>();
-    public static final List<String> BASIC_LANDS = new ArrayList<>();
-    public static final List<String> STEPPE_LYNX = new ArrayList<>();
-    public static final List<String> STOMPING_GROUND = new ArrayList<>();
-    public static final List<String> TEMPLE_GARDEN = new ArrayList<>();
-    public static final List<String> SACRED_FOUNDRY = new ArrayList<>();
-    public static final List<String> BLOODSTAINED_MIRE = new ArrayList<>();
-    public static final List<String> FIELD = new ArrayList<>();
-    public static final List<Integer> POWER = new ArrayList<>();
+    public static final List<String> FETCH_LANDS = new ArrayList<>();//ArrayList for all Fetchlands
+    public static final List<String> W_SHOCKS = new ArrayList<>();//ArrayList for all white shocklands
+    public static final List<String> W_LANDS = new ArrayList<>();//ArrayList for all lands with the plains type
+    public static final List<String> G_LANDS = new ArrayList<>();//ArrayList for all lands with the forest type
+    public static final List<String> R_LANDS = new ArrayList<>();//ArrayList for all lands with the mountain type
+    public static final List<String> CREATURES = new ArrayList<>();//ArrayList of all creatures
+    public static final List<String> ALL_LAND = new ArrayList<>();//ArrayList of all lands defined
+    public static final List<String> SHOCK_LANDS = new ArrayList<>();//ArrayList of all Shocklands
+    public static final List<String> BASIC_LANDS = new ArrayList<>();//ArrayList of all basic lands
+    public static final List<String> STEPPE_LYNX = new ArrayList<>();//ArrayList Steppe Lynx
+    public static final List<String> STOMPING_GROUND = new ArrayList<>();//ArrayList of Stomping Ground
+    public static final List<String> TEMPLE_GARDEN = new ArrayList<>();//ArrayList of Temple Garden
+    public static final List<String> SACRED_FOUNDRY = new ArrayList<>();//ArrayList of Sacred Foundry
+    public static final List<String> BLOODSTAINED_MIRE = new ArrayList<>();//ArrayList of Bloodstained Mire
+    public static final List<String> FIELD = new ArrayList<>();//ArrayList for the field
+    public static final List<Integer> POWER = new ArrayList<>();//ArrayList to keep track of power
     private static final ArrayList<String> INOPENING = new ArrayList<>();//List of cards required in opening
     private static final ArrayList<String> FIRSTDRAW = new ArrayList<>();//List of cards required in first draw
     public static boolean initDeck = false;
