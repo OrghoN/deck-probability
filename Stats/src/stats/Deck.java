@@ -25,6 +25,9 @@ public class Deck {
     public static final List<String> G_LANDS = new ArrayList<>();
     public static final List<String> R_LANDS = new ArrayList<>();
     public static final List<String> CREATURES = new ArrayList<>();
+    public static final List<String> R_CREATURES = new ArrayList<>();
+    public static final List<String> G_CREATURES = new ArrayList<>();
+    public static final List<String> W_CREATURES = new ArrayList<>();
     public static final List<String> ALL_LAND = new ArrayList<>();
     public static final List<String> SHOCK_LANDS = new ArrayList<>();
     public static final List<String> BASIC_LANDS = new ArrayList<>();
@@ -81,6 +84,19 @@ public class Deck {
                     ALL_LAND.add(line[1]);
                     break;
                 }
+                case "white creature": {
+                    W_CREATURES.add(line[1]);
+                    CREATURES.add(line[1]);
+                    break;
+                }
+                case "green creature": {
+                    G_CREATURES.add(line[1]);
+                    CREATURES.add(line[1]);
+                    break;
+                }
+                case "red creature": {
+                    R_CREATURES.add(line[1]);
+                }
                 case "creature": {
                     CREATURES.add(line[1]);
                     break;
@@ -91,6 +107,9 @@ public class Deck {
                 }
             }
         }
+        System.out.println("Red Creatures: " + R_CREATURES);
+        System.out.println("Green Creatures: " + G_CREATURES);
+        System.out.println("White Creatures: " + W_CREATURES);
     }
 
     /**
@@ -153,9 +172,23 @@ public class Deck {
     static void resolveMulligans() throws FileNotFoundException {
         switch (HAND.size()) {
             case 7:
-                if (containsCard(HAND, ALL_LAND, 2, 4)
-                        && (containsCard(HAND, CREATURES, 2, 5) || containsCard(HAND, "Steppe Lynx", 1, 1))) {
+                if (pHand()){
                     return;
+                }
+                if (containsCard(HAND, ALL_LAND, 2, 4)
+                        && (containsCard(HAND, CREATURES, 2, 5))) {
+                    if ((containsCard(HAND, G_LANDS,1,HAND.size())||containsCard(HAND,FETCH_LANDS,1,HAND.size()))
+                            &&(containsCard(HAND,G_CREATURES,1,HAND.size()))){
+                        return;
+                    }
+                    if ((containsCard(HAND, R_LANDS,1,HAND.size())||containsCard(HAND,FETCH_LANDS,1,HAND.size()))
+                            &&(containsCard(HAND,R_CREATURES,1,HAND.size()))){
+                        return;
+                    }
+                    if ((containsCard(HAND, W_LANDS,1,HAND.size())||containsCard(HAND,FETCH_LANDS,1,HAND.size()))
+                            &&(containsCard(HAND,W_CREATURES,1,HAND.size()))){
+                        return;
+                    }                  
                 }
                 break;
             case 6:
@@ -204,10 +237,26 @@ anything that is not a land*/
                 if (!isCard(DECK, ALL_LAND, 0)) {
                     scryBottom();
                 }
-            } else if (containsCard(HAND, ALL_LAND, 3, 7)) {
-                if (isCard(DECK, ALL_LAND, 0)) {
+            } else if (containsCard(HAND, ALL_LAND, 3, HAND.size())) {
+		if (containsCard(HAND,FETCH_LANDS,1,HAND.size())){
+		    if (isCard(DECK,ALL_LAND,0)){
+			scryBottom();
+		    }
+		} else if ((!containsCard(HAND,R_LANDS,1,HAND.size()))&&containsCard(HAND,R_CREATURES,1,HAND.size())){
+		    if (isCard(DECK,FETCH_LANDS,0)||isCard(DECK,R_LANDS,0)){
+			return 7 - HAND.size();
+		    }			
+		}else if ((!containsCard(HAND,G_LANDS,1,HAND.size()))&&containsCard(HAND,G_CREATURES,1,HAND.size())){
+		    if (isCard(DECK,FETCH_LANDS,0)||isCard(DECK,G_LANDS,0)){
+			return 7 - HAND.size();
+		    }
+		}else if ((!containsCard(HAND,W_LANDS,1,HAND.size()))&&containsCard(HAND,W_CREATURES,1,HAND.size())){
+		    if (isCard(DECK,W_LANDS,0)){//logic is different for white because of the lack of white creatures/spells
+			return 7 - HAND.size();
+		    }
+		} else if (isCard(DECK, ALL_LAND, 0)) {
                     scryBottom();
-                }
+                }  
             } else if (containsCard(HAND, CREATURES, 0, 2)) {
                 if (!isCard(DECK, CREATURES, 0)) {
                     scryBottom();
@@ -316,7 +365,7 @@ anything that is not a land*/
  * of times 
  */
     static boolean containsCard(List<String> list, String card, int lower, int upper) {
-        int count = 0;
+       int count = 0;
         for (int i = 0; i < list.size(); i++) {
             if (isCard(list, card, i)) {
                 count++;
@@ -337,17 +386,15 @@ anything that is not a land*/
      * TODO: Fix this. Horribly inefficient
      */
     static int findCard(List<String> list, List<String> cards) {
-        int index = -1;
         for (int i = 0; i < list.size(); i++) {
-            if (isCard(list, cards, i)) {
-                index = i;
-                break;
+            if (isCard(list, cards, i)) {        
+                return i;
             }
         }
-        if (index == -1) {
+        
             System.out.println("Cards: " + cards + "not found in " + list + "\n\n");
-        }
-        return index;
+        
+        return -1;
     }
     
 /**
