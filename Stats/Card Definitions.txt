@@ -24,6 +24,14 @@ Creature	Kird Ape
 Creature	Reckless Bushwhacker
 Creature	Steppe Lynx
 Creature	Wild Nacatl
+White Creature	Steppe Lynx
+Green Creature	Experiment One
+green creature	Wild Nacatl
+Green Creature	Burning-Tree Emissary
+Red Creature	Burning-Tree Emissary
+Red Creature	Goblin Guide
+Red Creature	Kird Ape
+Red Creature	Reckless Bushwacker
 Basic Land	Plains
 Basic Land	Island
 Basic Land	Swamp
