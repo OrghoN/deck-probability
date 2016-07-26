@@ -11,7 +11,7 @@ import java.util.Scanner;
 /**
  *
  * @author James Cannon
- * @version 26 July 2016 1:55 P.M.
+ * @version 26 July 2016 4:30 P.M.
  */
 public class Deck {
 
@@ -42,6 +42,11 @@ public class Deck {
     public static int LANDFALL = 0;
     public static boolean PLAYED_CARD = false;
 
+    /**
+     * TODO Comment code
+     *
+     * @throws FileNotFoundException
+     */
     static void initLists() throws FileNotFoundException {
 	INOPENING.add("Steppe Lynx");//init list cards required
 	FIRSTDRAW.add("Atarka's Command");
@@ -130,6 +135,7 @@ public class Deck {
      * @throws FileNotFoundException
      */
     static void initGame() throws FileNotFoundException {;
+	EVOLVE_COUNTERS.clear();
 	HAND.clear();
 	DECK.clear();
 	FIELD.clear();
@@ -320,13 +326,24 @@ anything that is not a land*/
      *
      * @param turn
      */
-    static void play(int turn) {//under construction
+    static int play(int turn) {//under construction
+//	System.out.println("Play land");
+	int power = 0;
+	int nhp = 0;
+	LANDFALL = 0;
 	LANDFALL = playLand();
+
 	PLAYED_CARD = false;
+//	System.out.println("calc mana");
 	MANA = calcMana();
-	int nhp = firstMain();
-	int power = calcPower(LANDFALL) - nhp;
+//	System.out.println("first main");
+	nhp = firstMain();
+//	System.out.println("After firstMain nhp = " + nhp);
+	power = calcPower(LANDFALL) - nhp;
+//	System.out.println("After calcPower: " + power);
 	MANA = secondMain(MANA);
+//	System.out.println("return play");
+	return power;
     }
 
     /**
@@ -401,6 +418,13 @@ anything that is not a land*/
 	return (count >= lower && count <= upper);
     }
 
+    /**
+     * TODO Comment
+     *
+     * @param list
+     * @param card
+     * @return
+     */
     static int numCard(List<String> list, List<String> card) {
 	int count = 0;
 	for (int i = 0; i < list.size(); i++) {
@@ -411,6 +435,13 @@ anything that is not a land*/
 	return count;
     }
 
+    /**
+     * TODO Comment code
+     *
+     * @param list
+     * @param card
+     * @return
+     */
     static int numCard(List<String> list, String card) {
 	int count = 0;
 	for (int i = 0; i < list.size(); i++) {
@@ -468,7 +499,7 @@ anything that is not a land*/
 		if (pHand()) {
 		    if (containsCard(HAND, W_SHOCKS, 1, HAND.size())) {
 			FIELD.add(HAND.remove(findCard(HAND, W_SHOCKS)));
-			
+
 			landfall = 1;
 		    } else {
 			if (!containsCard(HAND, "Bloodstained Mire", 1, HAND.size())) {
@@ -505,9 +536,9 @@ anything that is not a land*/
 		    } else if (containsCard(HAND, FETCH_LANDS, 1, HAND.size())) {
 			if (containsCard(DECK, "Stomping Ground", 1, DECK.size())) {
 			    FIELD.add(DECK.remove(findCard(DECK, "Stomping Ground")));
-			} else {
+			} else if (containsCard(DECK,SHOCK_LANDS,1,DECK.size())){
 			    FIELD.add(DECK.remove(findCard(DECK, SHOCK_LANDS)));
-			}
+			} else FIELD.add(DECK.remove(findCard(DECK,BASIC_LANDS)));
 			HAND.remove(findCard(HAND, FETCH_LANDS));
 			shuffle();
 			landfall = 2;
@@ -583,32 +614,69 @@ anything that is not a land*/
 	}
 	return count;
     }
-    
-    static void evolve(int power, int toughness){
-	for (int i =0; i<EVOLVE_COUNTERS.size(); i++){
-	    
-	    if (power>EVOLVE_COUNTERS.get(i)||toughness>EVOLVE_COUNTERS.get(i)){
-		EVOLVE_COUNTERS.set(i, EVOLVE_COUNTERS.get(i)+1);
+
+    /**
+     * TODO: Comment code
+     *
+     * @param power
+     * @param toughness
+     */
+    static void evolve(int power, int toughness) {
+	for (int i = 0; i < EVOLVE_COUNTERS.size(); i++) {
+
+	    if (power > EVOLVE_COUNTERS.get(i) + 1 || toughness > EVOLVE_COUNTERS.get(i) + 1) {
+		EVOLVE_COUNTERS.set(i, EVOLVE_COUNTERS.get(i) + 1);
 	    }
 	}
-	
+
     }
 
     /**
-     * TODO: Write code
+     * TODO: Comment code
      *
      * @param mana
      * @return
      */
     static int secondMain(int mana) {
-	switch (mana) {
+	if (mana > 0) {
+	    while (numCard(HAND, "Steppe Lynx") > 0 && mana > 0) {
+		mana -= 1;
+		FIELD.add(HAND.remove(findCard(HAND, "Steppe Lynx")));
+		evolve(0, 2);
+	    }
+	    while (numCard(HAND, "Experiment One") > 0 && mana > 0) {
+		mana -= 1;
+		FIELD.add(HAND.remove(findCard(HAND, "Experiment One")));
+		EVOLVE_COUNTERS.add(0);
+	    }
+	    while (numCard(HAND, "Wild Nacatl") > 0 && mana > 0) {
+		mana -= 1;
+		FIELD.add(HAND.remove(findCard(HAND, "Wild Nacatl")));
+		int var = 0;
+		if (numCard(FIELD, R_LANDS) > 0) {
+		    var++;
+		}
+		if (numCard(FIELD, W_LANDS) > 0) {
+		    var++;
+		}
+		evolve(1 + var, 1 + var);
+	    }
+	    while ((numCard(HAND, "Kird Ape") > 0) && mana > 0) {
+		mana -= 1;
+		FIELD.add(HAND.remove(findCard(HAND, "Kird Ape")));
+		if (numCard(FIELD, G_LANDS) > 0) {
+		    evolve(2, 3);
+		} else {
+		    evolve(1, 1);
+		}
+	    }
 
 	}
 	return mana;
     }
 
     /**
-     * TODO: Write code
+     * TODO: Comment code
      *
      * @param
      * @return
@@ -619,7 +687,7 @@ anything that is not a land*/
 	int extrdmg = 0;
 	while (MANA > 1 && containsCard(HAND, "Burning-Tree Emissary", 1, HAND.size())) {
 	    FIELD.add(HAND.remove(findCard(HAND, "Burning-Tree Emissary")));
-	    evolve(2,2);
+	    evolve(2, 2);
 	    nhp += 2;
 	    nhc++;
 	}
@@ -634,9 +702,9 @@ anything that is not a land*/
 	    PLAYED_CARD = true;
 	    if (containsCard(DECK, "Stomping Ground", 1, DECK.size())) {
 		FIELD.add(DECK.remove(findCard(DECK, "Stomping Ground")));
-	    } else {
+	    } else if(containsCard(DECK,SHOCK_LANDS,1,DECK.size())){
 		FIELD.add(DECK.remove(findCard(DECK, SHOCK_LANDS)));
-	    }
+	    } else FIELD.add(DECK.remove(findCard(DECK,BASIC_LANDS)));
 	    HAND.remove(findCard(HAND, FETCH_LANDS));
 	    shuffle();
 	    LANDFALL += 2;
@@ -652,47 +720,46 @@ anything that is not a land*/
 		MANA -= 1;
 		PLAYED_CARD = true;
 		FIELD.add(HAND.remove(findCard(HAND, "Goblin Guide")));
-		evolve(2,2);
+		evolve(2, 2);
 	    }
 	    while (MANA >= 1 && !containsCard(HAND, "Reckless Bushwacker", 1, HAND.size())
 		    && (numCard(HAND, "Goblin Guide") > 0)) {
 		MANA -= 1;
 		PLAYED_CARD = true;
 		FIELD.add(HAND.remove(findCard(HAND, "Goblin Guide")));
-		evolve(2,2);
+		evolve(2, 2);
 	    }
 	    if (MANA > 2 && containsCard(HAND, "Reckless Bushwacker", 1, HAND.size())) {
-		int var = 2*numCard(HAND,"Reckless Bushwacker");
-		while (var>MANA){
-		    var-=2;
+		int var = 2 * numCard(HAND, "Reckless Bushwacker");
+		while (var > MANA) {
+		    var -= 2;
 		}
 		MANA = secondMain(MANA - var);
 		while (MANA > 2 && numCard(HAND, "Goblin Guide") > 0) {
 		    MANA -= 1;
 		    PLAYED_CARD = true;
 		    FIELD.add(HAND.remove(findCard(HAND, "Goblin Guide")));
-		    evolve(2,2);
+		    evolve(2, 2);
 		}
 	    }
-	    if (MANA>=3 &&!PLAYED_CARD&&numCard(HAND,"Reckless Bushwacker")>0){
-		MANA-= 3;
-		PLAYED_CARD =true;
+	    if (MANA >= 3 && !PLAYED_CARD && numCard(HAND, "Reckless Bushwacker") > 0) {
+		MANA -= 3;
+		PLAYED_CARD = true;
 		extrdmg += (numCard(FIELD, CREATURES));
 		nhp = 0;
 		nhc = 0;
 		FIELD.add(HAND.remove(findCard(HAND, "Reckless Bushwacker")));
-		evolve(2,1);
+		evolve(2, 1);
 	    }
-	    while (MANA >= 2 && numCard(HAND, "Reckless Bushwacker")>0 && PLAYED_CARD
+	    while (MANA >= 2 && numCard(HAND, "Reckless Bushwacker") > 0 && PLAYED_CARD
 		    && containsCard(FIELD, CREATURES, 1, FIELD.size())) {
 		MANA -= 2;
 		extrdmg += (numCard(FIELD, CREATURES));
 		nhp = 0;
 		nhc = 0;
 		FIELD.add(HAND.remove(findCard(HAND, "Reckless Bushwacker")));
-		evolve(2,1);
+		evolve(2, 1);
 	    }
-	    
 
 	}
 
@@ -726,7 +793,7 @@ anything that is not a land*/
 			power += 2;
 		    }
 		    case "Kird Ape": {
-			if (numCard(FIELD, G_LANDS)>0) {
+			if (numCard(FIELD, G_LANDS) > 0) {
 			    power += 2;
 			} else {
 			    power += 1;
@@ -754,8 +821,8 @@ anything that is not a land*/
 		}
 	    }
 	}
-	for (int j = 0; j<EVOLVE_COUNTERS.size();j++){
-	    power+=EVOLVE_COUNTERS.get(j);
+	for (int j = 0; j < EVOLVE_COUNTERS.size(); j++) {
+	    power += EVOLVE_COUNTERS.get(j);
 	}
 	return power;
     }
