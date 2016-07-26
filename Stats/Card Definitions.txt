@@ -17,13 +17,8 @@ Other Shock	Breeding Pool
 Other Shock	Blood Crypt
 Other Shock	Overgrown Tomb
 Other Shock	Stomping Ground
-Creature	Goblin Guide
-Creature	Burning-Tree Emissary
-Creature	Experiment One
-Creature	Kird Ape
-Creature	Reckless Bushwhacker
-Creature	Steppe Lynx
-Creature	Wild Nacatl
+Haste Creature	Goblin Guide
+Haste Creature	Reckless Bushwhacker
 White Creature	Steppe Lynx
 Green Creature	Experiment One
 green creature	Wild Nacatl
