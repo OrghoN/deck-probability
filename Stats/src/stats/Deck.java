@@ -11,7 +11,7 @@ import java.util.Scanner;
 /**
  *
  * @author James Cannon
- * @version 27 July 2016 11:15 A.M.
+ * @version 27 July 2016 11:30 A.M.
  */
 public class Deck {
 
@@ -508,7 +508,9 @@ anything that is not a land*/
      */
     static int play(int turn) {//under construction
 	initTurn();
-	if (turn!=1)draw(1);
+	if (turn != 1) {
+	    draw(1);
+	}
 	LANDFALL = playLand();
 	MANA = calcMana();
 	int nhp = firstMain();
@@ -838,11 +840,13 @@ anything that is not a land*/
      */
     static int secondMain(int mana) {
 	if (mana > 0) {
-	    while (numCard(HAND, "Steppe Lynx") > 0 && mana > 0) {
-		mana -= 1;
-		PLAYED_CARD = true;
-		FIELD.add(HAND.remove(findCard(HAND, "Steppe Lynx")));
-		evolve(0, 2);
+	    if (numCard(HAND, FETCH_LANDS) > 0) {
+		while (numCard(HAND, "Steppe Lynx") > 0 && mana > 0) {
+		    mana -= 1;
+		    PLAYED_CARD = true;
+		    FIELD.add(HAND.remove(findCard(HAND, "Steppe Lynx")));
+		    evolve(0, 1);
+		}
 	    }
 	    while (numCard(HAND, "Experiment One") > 0 && mana > 0) {
 		mana -= 1;
@@ -873,6 +877,13 @@ anything that is not a land*/
 		    evolve(1, 1);
 		}
 	    }
+		while (numCard(HAND, "Steppe Lynx") > 0 && mana > 0) {
+		    mana -= 1;
+		    PLAYED_CARD = true;
+		    FIELD.add(HAND.remove(findCard(HAND, "Steppe Lynx")));
+		    evolve(0, 2);
+		}
+	    
 
 	}
 	return mana;
@@ -976,7 +987,7 @@ anything that is not a land*/
 		if (mana > 1 && numCard(HAND, "Ghor-Clan Rampager") > 0 && numCard(FIELD, CREATURES) > 0) {
 //assumption is that if you have 2 mana left over in a fishbowl you had a creature on the field able to attack this turn
 		    mana -= 2;
-		    HAND.remove(findCard(HAND,"Ghor-Clan Rampager"));
+		    HAND.remove(findCard(HAND, "Ghor-Clan Rampager"));
 		    cleanup += 4;
 		}
 	    }
