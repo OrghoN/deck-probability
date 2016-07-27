@@ -7,7 +7,7 @@
 4 Windswept Heath
 4 Wooded Foothills
 4 Atarka's Command
-4 Lighting Bolt
+4 Lightning Bolt
 2 Path to Exile
 4 Burning-Tree Emissary
 4 Experiment One
