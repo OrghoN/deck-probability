@@ -6,7 +6,7 @@ import java.util.ArrayList;
 /**
  *
  * @author James Cannon
- * @version 26 July 2016 - 4:30 P.M.
+ * @version 27 July 2016 - 11:15 A.M.
  */
 public class Stats {
 
@@ -38,7 +38,7 @@ public class Stats {
             required one mulligan, the hand size would be six and scry() returns 1.
             MULLS[] keeps track of the number of mulls and shows the difference between
             a mull to 6 and a mull to 3. A keep at 7 goes to MULLS[0].*/
-	    
+//	    System.out.println("After mulls/scry, hand: " + Deck.HAND + "\n");
 
             if (Deck.pHand()) {
                 /*The initial if statement calls handCheck, hContainsLand, and hContains Fetch
@@ -49,10 +49,10 @@ public class Stats {
                 at the top of the loop.*/
                 perfectHand++;
 //                System.out.println("Perfect Hand");
-//                System.out.println("Before play: " + Deck.HAND + "\nDeck: " + Deck.DECK);
+//                System.out.println("Before play: " + Deck.HAND + "\nField: " + Deck.FIELD + "\n");
                 damage+=Deck.play(1);//play() accounts for fetch lands and other cards that interact with the deck on T1
-//                System.out.println("Ater play: " + Deck.HAND + "\nDeck: " + Deck.DECK);
-                Deck.draw(1);//T2 begins with a draw
+//		System.out.println("Cumalitive Damage: " + damage + "\n");
+//                System.out.println("Ater play: " + Deck.HAND + "\nField: " + Deck.FIELD + "\n");
 //                System.out.println("After Draw: " + Deck.HAND + "\nDeck: " + Deck.DECK + "\n\n");
                 if (Deck.pGame()) {
                     /*The secondary if statement checks if the hand contains the
@@ -63,12 +63,17 @@ public class Stats {
 //                    System.out.println("Perfect Game");
                 }
             } else {
+//		System.out.println("Turn: " + 1 + ", before play: " + Deck.HAND + "\nField: " + Deck.FIELD + "\n");
                 damage+=Deck.play(1);
-                Deck.draw(1);
+//		System.out.println("Cumalitive Damage: " + damage + "\n");
+//		System.out.println("Turn: "+1+", after play: " + Deck.HAND + "\nField: " + Deck.FIELD + "\n");
             }
 	    for (int turn = 2; turn<=TURNS; turn++){
+//		System.out.println("Turn: " + turn + ", before play: " + Deck.HAND + "\nField: " + Deck.FIELD + "\n");
 		damage+=Deck.play(turn);
-		Deck.draw(1);
+//		System.out.println("Cumalitive Damage: " + damage + "\n");
+//		System.out.println("Turn: " + turn + ", after play: " + Deck.HAND + "\nField: " + Deck.FIELD + "\n");
+		
 	    }
 	    
 	    DAMAGE+=damage;
