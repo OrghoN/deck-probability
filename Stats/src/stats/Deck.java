@@ -11,7 +11,7 @@ import java.util.Scanner;
 /**
  *
  * @author James Cannon
- * @version 27 July 2016 11:30 A.M.
+ * @version 27 July 2016 4:00 P.M.
  */
 public class Deck {
 
@@ -74,6 +74,7 @@ public class Deck {
     public static int BR_MANA = 0;
     public static int BG_MANA = 0;
     public static int RG_MANA = 0;
+    public static int extrdmg = 0;
     public static int MANA = 0;
     public static int CLEANUP = 0;
     public static int LANDFALL = 0;
@@ -515,7 +516,8 @@ anything that is not a land*/
 	MANA = calcMana();
 	int nhp = firstMain();
 	boolean var = (numCard(FIELD, CREATURES) > 0);
-	int power = calcPower(LANDFALL) - nhp;
+	int power = calcPower(LANDFALL) -nhp;
+	power+=extrdmg;
 	MANA = secondMain(MANA);
 	if (var) {
 	    power += extendedCleanup(MANA);
@@ -555,6 +557,8 @@ anything that is not a land*/
     static int playLand() {
 	int landfall = 0;
 	if (numCard(HAND, ALL_LAND) > 0) {//make sure the hand has land in it
+	    if (numCard(HAND,ALL_LAND) + numCard(HAND,"Steppe Lynx")==HAND.size()
+		    && calcMana()>0 && numCard(FIELD,"Steppe Lynx")==0)return 0;//if you only have steppe lynx and land in hand, don't play a land
 	    if (numCard(FIELD, ALL_LAND) == 0) {//if there are zero lands on the field
 		if (pHand()) {
 		    if (numCard(HAND, W_SHOCKS) > 0) {
@@ -727,7 +731,7 @@ anything that is not a land*/
     static int firstMain() {
 	int nhp = 0;//non haste power
 	int nhc = 0;//non hast creatres
-	int extrdmg = 0;
+	extrdmg = 0;
 	while (MANA > 1 && numCard(HAND, "Burning-Tree Emissary") > 0) {
 	    PLAYED_CARD = true;
 	    FIELD.add(HAND.remove(findCard(HAND, "Burning-Tree Emissary")));
@@ -781,11 +785,12 @@ anything that is not a land*/
 	    }
 	    if (MANA > 2 && numCard(HAND, "Reckless Bushwhacker") > 0) {
 		int var = 2 * numCard(HAND, "Reckless Bushwhacker");
-		while (var > MANA) {
+		while (var > MANA) {//mana needed to cast all bushwhackers in hand
 		    var -= 2;
 		}
 		MANA = secondMain(MANA - var);
-		while (MANA > 2 && numCard(HAND, "Goblin Guide") > 0) {
+		
+		while ((MANA > var || MANA%2==1) && numCard(HAND, "Goblin Guide") > 0) {
 		    MANA -= 1;
 		    PLAYED_CARD = true;
 		    FIELD.add(HAND.remove(findCard(HAND, "Goblin Guide")));
@@ -801,6 +806,11 @@ anything that is not a land*/
 		FIELD.add(HAND.remove(findCard(HAND, "Reckless Bushwhacker")));
 		evolve(2, 1);
 	    }
+	    if (!PLAYED_CARD && numCard(HAND, "Goblin Guide")>0){
+		MANA--;
+		PLAYED_CARD = true;
+		evolve(2,2);
+	    }
 	    while (MANA >= 2 && numCard(HAND, "Reckless Bushwhacker") > 0 && PLAYED_CARD
 		    && numCard(FIELD, CREATURES) > 0) {
 		MANA -= 2;
@@ -812,8 +822,15 @@ anything that is not a land*/
 	    }
 
 	}
-
-	return nhp - extrdmg;
+	int i = calcPower(LANDFALL);
+	if (numCard(FIELD,"Experiment One")>0){
+	    MANA= secondMain(MANA);
+	}
+	int j = calcPower(LANDFALL);
+	nhp+= j - i;
+//	System.out.println("Extrdmg: " + extrdmg);
+//	System.out.println("nhp: " + nhp);
+	return nhp;
     }
 
     /**
@@ -979,21 +996,22 @@ anything that is not a land*/
 		if (numCard(HAND, "Lightning Bolt") > 1) {
 		    while (mana > 0 && numCard(HAND, "Lightning Bolt") > 0) {
 			mana--;
-
 			HAND.remove(findCard(HAND, "Lightning Bolt"));
 			cleanup += 3;
 		    }
 		}
-		if (mana > 1 && numCard(HAND, "Ghor-Clan Rampager") > 0 && numCard(FIELD, CREATURES) > 0) {
-//assumption is that if you have 2 mana left over in a fishbowl you had a creature on the field able to attack this turn
+		if (mana > 1 && numCard(HAND, "Ghor-Clan Rampager")>0) {
 		    mana -= 2;
 		    HAND.remove(findCard(HAND, "Ghor-Clan Rampager"));
 		    cleanup += 4;
 		}
+		while (mana>0 && numCard(HAND, "Lightning Bolt")>0){
+		    mana--;
+		    HAND.remove(findCard(HAND,"Lightning Bolt"));
+		    cleanup+=3;
+		}
 	    }
-
 	}
 	return cleanup;
     }
-
 }
