@@ -46,4 +46,4 @@ Green Creature	Burning-Tree Emissary
 Red Creature	Burning-Tree Emissary
 Red Creature	Goblin Guide
 Red Creature	Kird Ape
-Red Creature	Reckless Bushwacker
+Red Creature	Reckless Bushwhacker
