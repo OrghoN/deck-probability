@@ -11,7 +11,7 @@ import java.util.Scanner;
 /**
  *
  * @author James Cannon
- * @version 27 July 2016 4:00 P.M.
+ * @version 1 August 2016 3:20 P.M.
  */
 public class Deck {
 
@@ -74,11 +74,12 @@ public class Deck {
     public static int BR_MANA = 0;
     public static int BG_MANA = 0;
     public static int RG_MANA = 0;
+    public static int COLORLESS_MANA = 0;
     public static int extrdmg = 0;
     public static int MANA = 0;
     public static int CLEANUP = 0;
     public static int LANDFALL = 0;
-    public static boolean PLAYED_CARD = false;
+    public static boolean SURGE = false;
 
     /**
      * TODO Comment code
@@ -513,11 +514,12 @@ anything that is not a land*/
 	    draw(1);
 	}
 	LANDFALL = playLand();
+	calcMana(turn);
 	MANA = calcMana();
 	int nhp = firstMain();
 	boolean var = (numCard(FIELD, CREATURES) > 0);
-	int power = calcPower(LANDFALL) -nhp;
-	power+=extrdmg;
+	int power = calcPower(LANDFALL) - nhp;
+	power += extrdmg;
 	MANA = secondMain(MANA);
 	if (var) {
 	    power += extendedCleanup(MANA);
@@ -528,7 +530,7 @@ anything that is not a land*/
     }
 
     static void initTurn() {
-	PLAYED_CARD = false;
+	SURGE = false;
 	LANDFALL = 0;
 	W_MANA = 0;
 	U_MANA = 0;
@@ -557,8 +559,10 @@ anything that is not a land*/
     static int playLand() {
 	int landfall = 0;
 	if (numCard(HAND, ALL_LAND) > 0) {//make sure the hand has land in it
-	    if (numCard(HAND,ALL_LAND) + numCard(HAND,"Steppe Lynx")==HAND.size()
-		    && calcMana()>0 && numCard(FIELD,"Steppe Lynx")==0)return 0;//if you only have steppe lynx and land in hand, don't play a land
+	    if (numCard(HAND, ALL_LAND) + numCard(HAND, "Steppe Lynx") == HAND.size()
+		    && calcMana() > 0 && numCard(FIELD, "Steppe Lynx") == 0) {
+		return 0;//if you only have steppe lynx and land in hand, don't play a land
+	    }
 	    if (numCard(FIELD, ALL_LAND) == 0) {//if there are zero lands on the field
 		if (pHand()) {
 		    if (numCard(HAND, W_SHOCKS) > 0) {
@@ -722,18 +726,85 @@ anything that is not a land*/
 	return count;
     }
 
+    static void calcMana(int ij) {
+	for (int i = 0; i < FIELD.size(); i++) {
+	    if (isCard(FIELD, ALL_LAND, i)) {
+		if (isCard(FIELD, W_SHOCKS, i)) {
+		    if (isCard(FIELD, "Hallowed Fountain", i)) {
+			WU_MANA++;
+		    } else if (isCard(FIELD, "Godless Shrine", i)) {
+			WB_MANA++;
+		    } else if (isCard(FIELD, "Sacred Foundry", i)) {
+			WR_MANA++;
+		    } else if (isCard(FIELD, "Temple Garden", i)) {
+			WG_MANA++;
+		    }
+		} else if (isCard(FIELD, U_SHOCKS, i)) {
+		    if (isCard(FIELD, "Watery Grave", i)) {
+			UB_MANA++;
+		    } else if (isCard(FIELD, "Steam Vents", i)) {
+			UR_MANA++;
+		    } else if (isCard(FIELD, "Breeding Pool", i)) {
+			UG_MANA++;
+		    }
+		} else if (isCard(FIELD, B_SHOCKS, i)) {
+		    if (isCard(FIELD, "Blood Crypt", i)) {
+			BR_MANA++;
+		    } else if (isCard(FIELD, "Overgrown Tomb", i)) {
+			BG_MANA++;
+		    }
+		} else if (isCard(FIELD, "Stomping Ground", i)) {
+		    RG_MANA++;
+		} else if (isCard(FIELD, PLAINS, i)) {
+		    W_MANA++;
+		} else if (isCard(FIELD, ISLANDS, i)) {
+		    U_MANA++;
+		} else if (isCard(FIELD, SWAMPS, i)) {
+		    B_MANA++;
+		} else if (isCard(FIELD, MOUNTAINS, i)) {
+		    R_MANA++;
+		} else if (isCard(FIELD, FORESTS, i)) {
+		    G_MANA++;
+		} else {
+		    MANA++;
+		}
+	    }
+	}
+
+    }
+
     /**
      * TODO: Comment code
-     *
+     * The firstMain() plays intelligently based on creatures in hand and on the field
+     * 
+     * After every creature played it passes the creatures power and toughness to the evolve function
+     * If a creature without haste is played, it keeps track of that with the nhp and nhc variables
+     * First it checks for Burning-Tree Emissary and mana greater than 1. It plays all BTE's at that point
+     * Then, it checks for a combo set up. If the hand has everything necessary for T2, 11 damage, exit out of first main
+     * Third, it checks to see if the combo has been set up. If it has, then it executes the combo
+     * Then it checks for creatures with haste in hand, if there are haste creatures, it executes the following:
+     * If there is only one mana available, it plays a Goblin Guide if there is one.
+     * If there is more than one mana available and no Bushwhackers in hand, play all Goblin Guides
+     * If there is more than 2 mana available and bushwhackers in hand, the functions sets aside 2 mana for each bushwhacker
+     * and call the second main function to play any remaining creatures. Then it plays any remaining Goblin Guides that it has 
+     * mana for
+     * Next, if surge hasn't been triggered but there is 3 or more mana available, play a bushwhacker
+     * Then if surge still hasn't been triggered, play a goblin guide if you have it
+     * 
      * @param
      * @return
+     * 
+     * TODO Check logic for possibly prioritizing T1 Experiment One and Wild Nacatl over Goblin Guide. Situation follows:
+     * Turn: 1, before play: [Wild Nacatl, Windswept Heath, Kird Ape, Windswept Heath, Experiment One, Kird Ape, Goblin Guide]
+     * 
+     * 
      */
     static int firstMain() {
 	int nhp = 0;//non haste power
 	int nhc = 0;//non hast creatres
 	extrdmg = 0;
 	while (MANA > 1 && numCard(HAND, "Burning-Tree Emissary") > 0) {
-	    PLAYED_CARD = true;
+	    SURGE = true;
 	    FIELD.add(HAND.remove(findCard(HAND, "Burning-Tree Emissary")));
 	    evolve(2, 2);
 	    nhp += 2;
@@ -747,7 +818,7 @@ anything that is not a land*/
 		&& numCard(FIELD, "Steppe Lynx") > 0 && (MANA > 1)) {//C-C-C-C-Combo!
 	    MANA -= 2;
 	    HAND.remove(findCard(HAND, FIRSTDRAW));
-	    PLAYED_CARD = true;
+	    SURGE = true;
 	    if (numCard(DECK, "Stomping Ground") > 0) {
 		FIELD.add(DECK.remove(findCard(DECK, "Stomping Ground")));
 	    } else if (numCard(DECK, SHOCK_LANDS) > 0) {//Come back to this logic
@@ -763,55 +834,56 @@ anything that is not a land*/
 	    shuffle();
 	    LANDFALL += 2;
 	    MANA += 1;
-	    if (numCard(FIELD, CREATURES) > 2 + nhc) {//if you can deal more damage through the +1/+1 mode of Atarka's Command, do that
+	    if (numCard(FIELD, CREATURES) > 2 + nhc) {
+//if you can deal more damage through the +1/+1 mode of Atarka's Command, do that
 		extrdmg += (numCard(FIELD, CREATURES) - nhc);
-	    } else {
+	    } else {//otherwise, bolt their face
 		extrdmg += 3;
 	    }
 	}
 	if (numCard(HAND, H_CREATURES) > 0) {
 	    if (MANA == 1 && numCard(HAND, "Goblin Guide") > 0) {
 		MANA -= 1;
-		PLAYED_CARD = true;
+		SURGE = true;
 		FIELD.add(HAND.remove(findCard(HAND, "Goblin Guide")));
 		evolve(2, 2);
 	    }
 	    while (MANA >= 1 && numCard(HAND, "Reckless Bushwhacker") == 0
 		    && (numCard(HAND, "Goblin Guide") > 0)) {
 		MANA -= 1;
-		PLAYED_CARD = true;
+		SURGE = true;
 		FIELD.add(HAND.remove(findCard(HAND, "Goblin Guide")));
 		evolve(2, 2);
 	    }
 	    if (MANA > 2 && numCard(HAND, "Reckless Bushwhacker") > 0) {
 		int var = 2 * numCard(HAND, "Reckless Bushwhacker");
-		while (var > MANA) {//mana needed to cast all bushwhackers in hand
+		//mana needed to cast all bushwhackers in hand
+		while (var > MANA) {
 		    var -= 2;
 		}
 		MANA = secondMain(MANA - var);
-		
-		while ((MANA > var || MANA%2==1) && numCard(HAND, "Goblin Guide") > 0) {
+
+		while ((MANA > var || MANA % 2 == 1) && numCard(HAND, "Goblin Guide") > 0) {
 		    MANA -= 1;
-		    PLAYED_CARD = true;
+		    SURGE = true;
 		    FIELD.add(HAND.remove(findCard(HAND, "Goblin Guide")));
 		    evolve(2, 2);
 		}
 	    }
-	    if (MANA >= 3 && !PLAYED_CARD && numCard(HAND, "Reckless Bushwhacker") > 0) {
+	    if (MANA >= 3 && !SURGE && numCard(HAND, "Reckless Bushwhacker") > 0) {
 		MANA -= 3;
-		PLAYED_CARD = true;
+		SURGE = true;
 		extrdmg += (numCard(FIELD, CREATURES));
 		nhp = 0;
-		nhc = 0;
 		FIELD.add(HAND.remove(findCard(HAND, "Reckless Bushwhacker")));
 		evolve(2, 1);
 	    }
-	    if (!PLAYED_CARD && numCard(HAND, "Goblin Guide")>0){
+	    if (!SURGE && numCard(HAND, "Goblin Guide") > 0) {
 		MANA--;
-		PLAYED_CARD = true;
-		evolve(2,2);
+		SURGE = true;
+		evolve(2, 2);
 	    }
-	    while (MANA >= 2 && numCard(HAND, "Reckless Bushwhacker") > 0 && PLAYED_CARD
+	    while (MANA >= 2 && numCard(HAND, "Reckless Bushwhacker") > 0 && SURGE
 		    && numCard(FIELD, CREATURES) > 0) {
 		MANA -= 2;
 		extrdmg += (numCard(FIELD, CREATURES));
@@ -823,14 +895,166 @@ anything that is not a land*/
 
 	}
 	int i = calcPower(LANDFALL);
-	if (numCard(FIELD,"Experiment One")>0){
-	    MANA= secondMain(MANA);
+	if (numCard(FIELD, "Experiment One") > 0) {
+	    MANA = secondMain(MANA);
 	}
 	int j = calcPower(LANDFALL);
-	nhp+= j - i;
+	nhp += j - i;
 //	System.out.println("Extrdmg: " + extrdmg);
 //	System.out.println("nhp: " + nhp);
 	return nhp;
+    }
+/**
+ * This function intelligently casts spells based on mana available and cards in hand
+ * @param generic number of generic mana in the cost 
+ * @param cost colored mana symbols in the cost. Format should be in wubrg order
+ * If it is a hybrid mana, denote that with H followed by the two colors (in wubrg order).
+ * @return false if unable to cast the spell, true if able to cast the spell.
+ * input for the function should look like 3,RHRG for 3 generic, one red, one red/green hybrid
+ */
+    static boolean castSpell(int generic, String cost) {
+	int w = 0;
+	int u = 0;
+	int b = 0;
+	int r = 0;
+	int g = 0;
+	int wu = 0;
+	int wb = 0;
+	int wr = 0;
+	int wg = 0;
+	int ub = 0;
+	int ur = 0;
+	int ug = 0;
+	int br = 0;
+	int bg = 0;
+	int rg = 0;
+
+	for (int i = 0; i < cost.length(); i++) {
+	    switch (cost.charAt(i)) {
+		case 'w': {
+		    w++;
+		    break;
+		}
+		case 'u': {
+		    u++;
+		    break;
+		}
+		case 'b': {
+		    b++;
+		    break;
+		}
+		case 'r': {
+		    r++;
+		    break;
+		}
+		case 'g': {
+		    g++;
+		    break;
+		}
+		case 'h': {
+		    char ch = cost.charAt(i + 2);
+		    switch (cost.charAt(i + 1)) {
+			case 'w': {
+			    switch (ch) {
+				case 'u': {
+				    wu++;
+				    break;
+				}
+				case 'b': {
+				    wb++;
+				    break;
+				}
+				case 'r': {
+				    wr++;
+				    break;
+				}
+				case 'g': {
+				    wg++;
+				    break;
+				}
+			    }
+			    break;
+			}
+			case 'u': {
+			    switch (ch) {
+				case 'b': {
+				    ub++;
+				    break;
+				}
+				case 'r': {
+				    ur++;
+				    break;
+				}
+				case 'g': {
+				    ug++;
+				    break;
+				}
+			    }
+			    break;
+			}
+			case 'b': {
+			    switch (ch) {
+				case 'r': {
+				    br++;
+				    break;
+				}
+				case 'g': {
+				    bg++;
+				    break;
+				}
+			    }
+			    break;
+			}
+			case 'r': {
+			    rg++;
+			    break;
+			}
+		    }
+		    i += 2;
+		}
+	    }
+	}
+	if (w > W_MANA + WU_MANA + WB_MANA + WR_MANA + WG_MANA
+		|| u > U_MANA + WU_MANA + UB_MANA + UR_MANA + UG_MANA
+		|| b > B_MANA + WB_MANA + UB_MANA + BR_MANA + BG_MANA
+		|| r > R_MANA + WR_MANA + UR_MANA + BR_MANA + RG_MANA
+		|| g > G_MANA + WG_MANA + UG_MANA + BG_MANA + RG_MANA
+		|| w + u + b + r + g + wu + wb + wr + wg + ub + ur + ug + br 
+		+ bg + rg + generic > W_MANA + U_MANA + B_MANA + R_MANA + G_MANA 
+		+ WU_MANA + WB_MANA + WR_MANA + WG_MANA + UB_MANA + UR_MANA 
+		+ UG_MANA + BR_MANA + BG_MANA + RG_MANA + COLORLESS_MANA) {
+	    return false;
+	}
+	while (w + u + b + r + g + wu + wb + wr + wg + ub + ur + ug + br + bg + rg > 0) {
+	    while (w > 0) {
+		if (W_MANA > 0) {
+		    W_MANA--;
+		    w--;
+		} else if (u == 0 && WU_MANA > 0) {
+		    WU_MANA--;
+		    w--;
+		} else if (b == 0 && WB_MANA > 0) {
+		    WB_MANA--;
+		    w--;
+		}else if (u == 0 && WR_MANA > 0) {
+		    WR_MANA--;
+		    w--;
+		} else if (b == 0 && WG_MANA > 0) {
+		    WG_MANA--;
+		    w--;
+		}else{//come back and make this more intelligent
+		    if (WU_MANA>0){
+			WU_MANA--;
+			w--;
+		    }else if (WB_MANA>0){
+			WB_MANA--;
+			wb--;
+		    }
+		}
+
+	    }
+	}
+	return false;
     }
 
     /**
@@ -860,20 +1084,20 @@ anything that is not a land*/
 	    if (numCard(HAND, FETCH_LANDS) > 0) {
 		while (numCard(HAND, "Steppe Lynx") > 0 && mana > 0) {
 		    mana -= 1;
-		    PLAYED_CARD = true;
+		    SURGE = true;
 		    FIELD.add(HAND.remove(findCard(HAND, "Steppe Lynx")));
 		    evolve(0, 1);
 		}
 	    }
 	    while (numCard(HAND, "Experiment One") > 0 && mana > 0) {
 		mana -= 1;
-		PLAYED_CARD = true;
+		SURGE = true;
 		FIELD.add(HAND.remove(findCard(HAND, "Experiment One")));
 		EVOLVE_COUNTERS.add(0);
 	    }
 	    while (numCard(HAND, "Wild Nacatl") > 0 && mana > 0) {
 		mana -= 1;
-		PLAYED_CARD = true;
+		SURGE = true;
 		FIELD.add(HAND.remove(findCard(HAND, "Wild Nacatl")));
 		int var = 0;
 		if (numCard(FIELD, MOUNTAINS) > 0) {
@@ -886,7 +1110,7 @@ anything that is not a land*/
 	    }
 	    while ((numCard(HAND, "Kird Ape") > 0) && mana > 0) {
 		mana -= 1;
-		PLAYED_CARD = true;
+		SURGE = true;
 		FIELD.add(HAND.remove(findCard(HAND, "Kird Ape")));
 		if (numCard(FIELD, FORESTS) > 0) {
 		    evolve(2, 3);
@@ -894,13 +1118,12 @@ anything that is not a land*/
 		    evolve(1, 1);
 		}
 	    }
-		while (numCard(HAND, "Steppe Lynx") > 0 && mana > 0) {
-		    mana -= 1;
-		    PLAYED_CARD = true;
-		    FIELD.add(HAND.remove(findCard(HAND, "Steppe Lynx")));
-		    evolve(0, 2);
-		}
-	    
+	    while (numCard(HAND, "Steppe Lynx") > 0 && mana > 0) {
+		mana -= 1;
+		SURGE = true;
+		FIELD.add(HAND.remove(findCard(HAND, "Steppe Lynx")));
+		evolve(0, 2);
+	    }
 
 	}
 	return mana;
@@ -1000,15 +1223,15 @@ anything that is not a land*/
 			cleanup += 3;
 		    }
 		}
-		if (mana > 1 && numCard(HAND, "Ghor-Clan Rampager")>0) {
+		if (mana > 1 && numCard(HAND, "Ghor-Clan Rampager") > 0) {
 		    mana -= 2;
 		    HAND.remove(findCard(HAND, "Ghor-Clan Rampager"));
 		    cleanup += 4;
 		}
-		while (mana>0 && numCard(HAND, "Lightning Bolt")>0){
+		while (mana > 0 && numCard(HAND, "Lightning Bolt") > 0) {
 		    mana--;
-		    HAND.remove(findCard(HAND,"Lightning Bolt"));
-		    cleanup+=3;
+		    HAND.remove(findCard(HAND, "Lightning Bolt"));
+		    cleanup += 3;
 		}
 	    }
 	}
