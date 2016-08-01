@@ -6,11 +6,11 @@ import java.util.ArrayList;
 /**
  *
  * @author James Cannon
- * @version 27 July 2016 - 4:00 P.M.
+ * @version 1 August 2016 - 3:20 P.M.
  */
 public class Stats {
 
-    private static final double SIMULATIONS = 1000000;
+    private static final double SIMULATIONS = 10000000;
     private static double perfectGame = 0;//number of perfect games
     private static double perfectHand = 0;//number of perfect hands
     private static final int[] MULLS = new int[6];//array for keeping track of mulligans
@@ -53,7 +53,6 @@ public class Stats {
                 damage+=Deck.play(1);//play() accounts for fetch lands and other cards that interact with the deck on T1
 //		System.out.println("Cumalitive Damage: " + damage + "\n");
 //                System.out.println("Ater play: " + Deck.HAND + "\nField: " + Deck.FIELD + "\n");
-//                System.out.println("After Draw: " + Deck.HAND + "\nDeck: " + Deck.DECK + "\n\n");
                 if (Deck.pGame()) {
                     /*The secondary if statement checks if the hand contains the
                     required sequence of cards for the second turn. In this case, it
