@@ -40,3 +40,13 @@ Game play:
 
 NOTE for this, we will be using proability calculations for finding multiple permutations, resources for the math behind this can be found in <a href="https://www.khanacademy.org/math/probability/probability-and-combinatorics-topic/probability_combinatorics/e/probability_with_perm_comb">multiple</a> <a href="http://study.com/academy/lesson/how-to-calculate-the-probability-of-permuations.html">different</a> <a href="https://www.khanacademy.org/math/probability/probability-and-combinatorics-topic/permutations/v/permutation-formula">places</a>. As I look into this more and more, I realize we need to include <a href="https://www.khanacademy.org/math/probability/probability-and-combinatorics-topic/combinations-combinatorics/v/introduction-to-combinations">combinations</a> with permutations.
 
+
+
+TODO notes: 
+Finish dealing with casting based on color requirements and comment throughout the code.
+
+Possible future additions: 
+Check specific hands for average damage threatened (One-landers, specific cases of borderline keep/mulls). 
+Add array to Stats.java to track various damage metrics (0-5 damage, 6-10, 11-15, 16-20, 21-25, 26+) to more accurately understand the distribution. 
+Run calculations to determine the best option for most damage in the code.
+
