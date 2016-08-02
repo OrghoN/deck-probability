@@ -11,7 +11,7 @@ import java.util.Scanner;
 /**
  *
  * @author James Cannon
- * @version 1 August 2016 3:20 P.M.
+ * @version 2 August 2016 3:20 P.M.
  */
 public class Deck {
 
@@ -295,27 +295,29 @@ public class Deck {
 		}
 		break;
 	    case 6:
-		if (containsCard(HAND, ALL_LAND, 1, 4) && containsCard(HAND, CREATURES, 1, 5)) {
+		if (containsCard(HAND, ALL_LAND, 1, 4) && (numCard(HAND, CREATURES) > 1
+			|| (numCard(HAND, "Steppe Lynx") > 0 && numCard(HAND, ALL_LAND) > 2))) {
 		    return;
 		}
 		break;
 	    case 5:
-		if (containsCard(HAND, ALL_LAND, 1, 4)) {
+		if (numCard(HAND, ALL_LAND) > 0 && numCard(HAND, CREATURES) > 0 && (numCard(HAND,"Experiment One")!=1||numCard(HAND,CREATURES)>1)) {
 		    return;
 		}
 		break;
 	    case 4:
-		if (containsCard(HAND, ALL_LAND, 1, 4)) {
+		if (numCard(HAND, ALL_LAND) > 0 && numCard(HAND, CREATURES) > 0) {
 		    return;
 		}
 		break;
 	    case 3:
-		if (containsCard(HAND, ALL_LAND, 1, 3)) {
+		if (numCard(HAND, ALL_LAND) > 0 && numCard(HAND, CREATURES) > 0) {
 		    return;
 		}
 		break;
-	    default:
+	    default: {
 		return;
+	    }
 	}
 	int i = (HAND.size() - 1);
 	initGame();
@@ -774,30 +776,36 @@ anything that is not a land*/
     }
 
     /**
-     * TODO: Comment code
-     * The firstMain() plays intelligently based on creatures in hand and on the field
-     * 
-     * After every creature played it passes the creatures power and toughness to the evolve function
-     * If a creature without haste is played, it keeps track of that with the nhp and nhc variables
-     * First it checks for Burning-Tree Emissary and mana greater than 1. It plays all BTE's at that point
-     * Then, it checks for a combo set up. If the hand has everything necessary for T2, 11 damage, exit out of first main
-     * Third, it checks to see if the combo has been set up. If it has, then it executes the combo
-     * Then it checks for creatures with haste in hand, if there are haste creatures, it executes the following:
-     * If there is only one mana available, it plays a Goblin Guide if there is one.
-     * If there is more than one mana available and no Bushwhackers in hand, play all Goblin Guides
-     * If there is more than 2 mana available and bushwhackers in hand, the functions sets aside 2 mana for each bushwhacker
-     * and call the second main function to play any remaining creatures. Then it plays any remaining Goblin Guides that it has 
-     * mana for
-     * Next, if surge hasn't been triggered but there is 3 or more mana available, play a bushwhacker
-     * Then if surge still hasn't been triggered, play a goblin guide if you have it
-     * 
+     * TODO: Comment code The firstMain() plays intelligently based on creatures
+     * in hand and on the field
+     *
+     * After every creature played it passes the creatures power and toughness
+     * to the evolve function If a creature without haste is played, it keeps
+     * track of that with the nhp and nhc variables First it checks for
+     * Burning-Tree Emissary and mana greater than 1. It plays all BTE's at that
+     * point Then, it checks for a combo set up. If the hand has everything
+     * necessary for T2, 11 damage, exit out of first main Third, it checks to
+     * see if the combo has been set up. If it has, then it executes the combo
+     * Then it checks for creatures with haste in hand, if there are haste
+     * creatures, it executes the following: If there is only one mana
+     * available, it plays a Goblin Guide if there is one. If there is more than
+     * one mana available and no Bushwhackers in hand, play all Goblin Guides If
+     * there is more than 2 mana available and bushwhackers in hand, the
+     * functions sets aside 2 mana for each bushwhacker and call the second main
+     * function to play any remaining creatures. Then it plays any remaining
+     * Goblin Guides that it has mana for Next, if surge hasn't been triggered
+     * but there is 3 or more mana available, play a bushwhacker Then if surge
+     * still hasn't been triggered, play a goblin guide if you have it
+     *
      * @param
      * @return
-     * 
-     * TODO Check logic for possibly prioritizing T1 Experiment One and Wild Nacatl over Goblin Guide. Situation follows:
-     * Turn: 1, before play: [Wild Nacatl, Windswept Heath, Kird Ape, Windswept Heath, Experiment One, Kird Ape, Goblin Guide]
-     * 
-     * 
+     *
+     * TODO Check logic for possibly prioritizing T1 Experiment One and Wild
+     * Nacatl over Goblin Guide. Situation follows: Turn: 1, before play: [Wild
+     * Nacatl, Windswept Heath, Kird Ape, Windswept Heath, Experiment One, Kird
+     * Ape, Goblin Guide]
+     *
+     *
      */
     static int firstMain() {
 	int nhp = 0;//non haste power
@@ -817,7 +825,7 @@ anything that is not a land*/
 	if ((HAND.containsAll(FIRSTDRAW) && numCard(HAND, FETCH_LANDS) > 0)
 		&& numCard(FIELD, "Steppe Lynx") > 0 && (MANA > 1)) {//C-C-C-C-Combo!
 	    MANA -= 2;
-	    HAND.remove(findCard(HAND, FIRSTDRAW));
+	    HAND.remove(findCard(HAND, "Atarka's Command"));
 	    SURGE = true;
 	    if (numCard(DECK, "Stomping Ground") > 0) {
 		FIELD.add(DECK.remove(findCard(DECK, "Stomping Ground")));
@@ -861,7 +869,9 @@ anything that is not a land*/
 		while (var > MANA) {
 		    var -= 2;
 		}
+		int x = numCard(FIELD, CREATURES);
 		MANA = secondMain(MANA - var);
+		nhc += numCard(FIELD, CREATURES) - x;
 
 		while ((MANA > var || MANA % 2 == 1) && numCard(HAND, "Goblin Guide") > 0) {
 		    MANA -= 1;
@@ -875,6 +885,7 @@ anything that is not a land*/
 		SURGE = true;
 		extrdmg += (numCard(FIELD, CREATURES));
 		nhp = 0;
+		nhc = 0;
 		FIELD.add(HAND.remove(findCard(HAND, "Reckless Bushwhacker")));
 		evolve(2, 1);
 	    }
@@ -894,24 +905,72 @@ anything that is not a land*/
 	    }
 
 	}
-	int i = calcPower(LANDFALL);
+
 	if (numCard(FIELD, "Experiment One") > 0) {
+	    int i = calcPower(LANDFALL);
+	    int v = numCard(FIELD, CREATURES);
 	    MANA = secondMain(MANA);
+	    nhp += calcPower(LANDFALL) - i;
+	    nhc += numCard(FIELD, CREATURES) - v;
 	}
-	int j = calcPower(LANDFALL);
-	nhp += j - i;
+
+	while (numCard(HAND, "Reckless Bushwhacker") > 0) {
+	    if (SURGE&&MANA>1) {
+		MANA -= 2;
+	    } else if (MANA>2) {
+		MANA -= 3;
+		SURGE = true;
+	    }else break;
+	    extrdmg += (numCard(FIELD, CREATURES));
+	    nhp = 0;
+	    nhc = 0;
+	    FIELD.add(HAND.remove(findCard(HAND, "Reckless Bushwhacker")));
+	    evolve(2, 1);
+	}
+	if (numCard(HAND, CREATURES) == 0 && MANA > 1) {
+
+	    while (MANA > 1 && numCard(FIELD, CREATURES) > 0
+		    && (numCard(HAND, "Atarka's Command") > 0 || numCard(HAND, "Ghor-Clan Rampager") > 0)) {
+		if (numCard(FIELD, CREATURES) > 2) {
+		    if (numCard(HAND, "Atarka's Command") > 0) {
+			MANA -= 2;
+			HAND.remove(findCard(HAND, "Atarka's Command"));
+			extrdmg += (numCard(FIELD, CREATURES) - nhc) + 3;
+		    } else if (numCard(HAND, "Ghor-Clan Rampager") > 0) {
+			MANA-=2;
+			HAND.remove(findCard(HAND, "Ghor-Clan Rampager"));
+			extrdmg+=4;
+		    }
+		}else{
+		    if (numCard(HAND, "Ghor-Clan Rampager") > 0) {
+			MANA-=2;
+			HAND.remove(findCard(HAND, "Ghor-Clan Rampager"));
+			extrdmg+=4;
+		    }else if (numCard(HAND, "Atarka's Command") > 0) {
+			MANA -= 2;
+			HAND.remove(findCard(HAND, "Atarka's Command"));
+			extrdmg += (numCard(FIELD, CREATURES) - nhc) + 3;
+		    }
+		}
+	    }
+	}
 //	System.out.println("Extrdmg: " + extrdmg);
 //	System.out.println("nhp: " + nhp);
 	return nhp;
     }
-/**
- * This function intelligently casts spells based on mana available and cards in hand
- * @param generic number of generic mana in the cost 
- * @param cost colored mana symbols in the cost. Format should be in wubrg order
- * If it is a hybrid mana, denote that with H followed by the two colors (in wubrg order).
- * @return false if unable to cast the spell, true if able to cast the spell.
- * input for the function should look like 3,RHRG for 3 generic, one red, one red/green hybrid
- */
+
+    /**
+     * This function intelligently casts spells based on mana available and
+     * cards in hand
+     *
+     * @param generic number of generic mana in the cost
+     * @param cost colored mana symbols in the cost. Format should be in wubrg
+     * order If it is a hybrid mana, denote that with H followed by the two
+     * colors (in wubrg order).
+     * @return false if unable to cast the spell, true if able to cast the
+     * spell. input for the function should look like 3,RHRG for 3 generic, one
+     * red, one red/green hybrid
+     */
     static boolean castSpell(int generic, String cost) {
 	int w = 0;
 	int u = 0;
@@ -1019,9 +1078,9 @@ anything that is not a land*/
 		|| b > B_MANA + WB_MANA + UB_MANA + BR_MANA + BG_MANA
 		|| r > R_MANA + WR_MANA + UR_MANA + BR_MANA + RG_MANA
 		|| g > G_MANA + WG_MANA + UG_MANA + BG_MANA + RG_MANA
-		|| w + u + b + r + g + wu + wb + wr + wg + ub + ur + ug + br 
-		+ bg + rg + generic > W_MANA + U_MANA + B_MANA + R_MANA + G_MANA 
-		+ WU_MANA + WB_MANA + WR_MANA + WG_MANA + UB_MANA + UR_MANA 
+		|| w + u + b + r + g + wu + wb + wr + wg + ub + ur + ug + br
+		+ bg + rg + generic > W_MANA + U_MANA + B_MANA + R_MANA + G_MANA
+		+ WU_MANA + WB_MANA + WR_MANA + WG_MANA + UB_MANA + UR_MANA
 		+ UG_MANA + BR_MANA + BG_MANA + RG_MANA + COLORLESS_MANA) {
 	    return false;
 	}
@@ -1036,21 +1095,20 @@ anything that is not a land*/
 		} else if (b == 0 && WB_MANA > 0) {
 		    WB_MANA--;
 		    w--;
-		}else if (u == 0 && WR_MANA > 0) {
+		} else if (u == 0 && WR_MANA > 0) {
 		    WR_MANA--;
 		    w--;
 		} else if (b == 0 && WG_MANA > 0) {
 		    WG_MANA--;
 		    w--;
-		}else{//come back and make this more intelligent
-		    if (WU_MANA>0){
+		} else//come back and make this more intelligent
+		 if (WU_MANA > 0) {
 			WU_MANA--;
 			w--;
-		    }else if (WB_MANA>0){
+		    } else if (WB_MANA > 0) {
 			WB_MANA--;
 			wb--;
 		    }
-		}
 
 	    }
 	}
