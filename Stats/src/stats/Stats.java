@@ -6,7 +6,7 @@ import java.util.ArrayList;
 /**
  *
  * @author James Cannon
- * @version 2 August 2016 - 4:30 P.M.
+ * @version 22 December 2016 - 1:20 P.M.
  */
 public class Stats {
 
@@ -14,9 +14,9 @@ public class Stats {
     private static double perfectGame = 0;//number of perfect games
     private static double perfectHand = 0;//number of perfect hands
     private static final int[] MULLS = new int[6];//array for keeping track of mulligans
-    private static final int TURNS = 4;
-    private static final int[] DMG = new int[11];
-    private static final int[] MANA = new int[TURNS + 3];
+    private static final int TURNS = 4;//number of turns the simulation runs for
+    private static final int[] DMG = new int[11];//array for keeping track of damage totals
+    private static final int[] MANA = new int[TURNS + 3]; // array for keeping track of lands
     private static final int CRITICAL = 17;
     private static double DAMAGE = 0;
 
@@ -40,8 +40,6 @@ public class Stats {
             required one mulligan, the hand size would be six and scry() returns 1.
             MULLS[] keeps track of the number of mulls and shows the difference between
             a mull to 6 and a mull to 3. A keep at 7 goes to MULLS[0].*/
-//	    System.out.println("After mulls/scry, hand: " + Deck.HAND + "\n");
-
 	    if (Deck.pHand()) {
 		/*The initial if statement calls handCheck, hContainsLand, and hContains Fetch
                 per specifications of the situation. In this case, the hand must contain
@@ -50,41 +48,30 @@ public class Stats {
                 the simulations is treated as a failure and a new simulation begins
                 at the top of the loop.*/
 		perfectHand++;
-//                System.out.println("Perfect Hand");
-//                System.out.println("Before play: " + Deck.HAND + "\nField: " + Deck.FIELD + "\n");
 		damage += Deck.play(1);//play() accounts for fetch lands and other cards that interact with the deck on T1
-//		System.out.println("Cumalitive Damage: " + damage + "\n");
-//                System.out.println("Ater play: " + Deck.HAND + "\nField: " + Deck.FIELD + "\n");
 		if (Deck.pGame()) {
 		    /*The secondary if statement checks if the hand contains the
                     required sequence of cards for the second turn. In this case, it
                     checks for FIRSTDRAW and 2 fetch lands. If it has the required
                     cards, the variable for recording a perfect game is incremented.*/
 		    perfectGame++;
-//                    System.out.println("Perfect Game");
 		}
 	    } else {
-//		System.out.println("Turn: " + 1 + ", before play: " + Deck.HAND + "\nField: " + Deck.FIELD + "\n");
 		damage += Deck.play(1);
-//		System.out.println("Cumalitive Damage: " + damage + "\n");
-//		System.out.println("Turn: "+1+", after play: " + Deck.HAND + "\nField: " + Deck.FIELD + "\n");
 	    }
 	    for (int turn = 2; turn <= TURNS; turn++) {
-//		System.out.println("Turn: " + turn + ", before play: " + Deck.HAND + "\nField: " + Deck.FIELD + "\n");
 		damage += Deck.play(turn);
-//		System.out.println("Cumalitive Damage: " + damage + "\n");
-//		System.out.println("Turn: " + turn + ", after play: " + Deck.HAND + "\nField: " + Deck.FIELD + "\n");
-
 	    }
+		
+//	    for (int turn_tracker = 2; damage <=20; turn_tracker++){ //optional calculation; how many turns until 20 damage.
+//		    damage += Deck.play(turn_tracker);
+//	    }
+		
 	    int var = damage / 5;
 	    if ( var >9) {
-//		System.out.println("Cumalitive Damage: " + damage + "\n");
-//		System.out.println("After play hand: " + Deck.HAND + "\nField: " + Deck.FIELD + "\n");
 		DMG[10]++;
 	    } else DMG[var]++;
-//	    if (damage > 30) {
-//		System.out.println("Damage: " + damage + "\tVar: " + var);
-//	    }
+		
 	    if (damage>=CRITICAL){
 		win++;
 	    }
@@ -93,6 +80,7 @@ public class Stats {
 	    MANA[Deck.calcMana()]++;
 
 	}//for
+	    
 	int total = 0;
 	for (int i = 0; i < MULLS.length; i++) {
 	    total += MULLS[i];
