@@ -43,7 +43,7 @@ NOTE for this, we will be using proability calculations for finding multiple per
 
 
 TODO notes: 
-Finish dealing with casting based on color requirements and comment throughout the code.
+Finish dealing with casting based on color requirements and comment throughout the code. Check logic behind Bushwacker, make sure it doesn't trigger on a hard cast.
 
 Possible future additions: 
 Check specific hands for average damage threatened (One-landers, specific cases of borderline keep/mulls). 
