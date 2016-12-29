@@ -11,7 +11,7 @@ import java.util.Scanner;
 /**
  *
  * @author James Cannon
- * @version 2 August 2016 3:20 P.M.
+ * @version 29 December 2016 3:00 P.M.
  */
 public class Deck {
 
@@ -301,7 +301,7 @@ public class Deck {
 		}
 		break;
 	    case 5:
-		if (numCard(HAND, ALL_LAND) > 0 && numCard(HAND, CREATURES) > 0 && (numCard(HAND,"Experiment One")!=1||numCard(HAND,CREATURES)>1)) {
+		if (numCard(HAND, ALL_LAND) > 0 && numCard(HAND, CREATURES) > 0 && (numCard(HAND, "Experiment One") != 1 || numCard(HAND, CREATURES) > 1)) {
 		    return;
 		}
 		break;
@@ -915,15 +915,17 @@ anything that is not a land*/
 	}
 
 	while (numCard(HAND, "Reckless Bushwhacker") > 0) {
-	    if (SURGE&&MANA>1) {
+	    if (SURGE && MANA > 1) {
 		MANA -= 2;
-	    } else if (MANA>2) {
+		extrdmg += (numCard(FIELD, CREATURES));
+		nhp = 0;
+		nhc = 0;
+	    } else if (MANA > 2) {
 		MANA -= 3;
 		SURGE = true;
-	    }else break;
-	    extrdmg += (numCard(FIELD, CREATURES));
-	    nhp = 0;
-	    nhc = 0;
+	    } else {
+		break;
+	    }
 	    FIELD.add(HAND.remove(findCard(HAND, "Reckless Bushwhacker")));
 	    evolve(2, 1);
 	}
@@ -937,20 +939,18 @@ anything that is not a land*/
 			HAND.remove(findCard(HAND, "Atarka's Command"));
 			extrdmg += (numCard(FIELD, CREATURES) - nhc) + 3;
 		    } else if (numCard(HAND, "Ghor-Clan Rampager") > 0) {
-			MANA-=2;
-			HAND.remove(findCard(HAND, "Ghor-Clan Rampager"));
-			extrdmg+=4;
-		    }
-		}else{
-		    if (numCard(HAND, "Ghor-Clan Rampager") > 0) {
-			MANA-=2;
-			HAND.remove(findCard(HAND, "Ghor-Clan Rampager"));
-			extrdmg+=4;
-		    }else if (numCard(HAND, "Atarka's Command") > 0) {
 			MANA -= 2;
-			HAND.remove(findCard(HAND, "Atarka's Command"));
-			extrdmg += (numCard(FIELD, CREATURES) - nhc) + 3;
+			HAND.remove(findCard(HAND, "Ghor-Clan Rampager"));
+			extrdmg += 4;
 		    }
+		} else if (numCard(HAND, "Ghor-Clan Rampager") > 0) {
+		    MANA -= 2;
+		    HAND.remove(findCard(HAND, "Ghor-Clan Rampager"));
+		    extrdmg += 4;
+		} else if (numCard(HAND, "Atarka's Command") > 0) {
+		    MANA -= 2;
+		    HAND.remove(findCard(HAND, "Atarka's Command"));
+		    extrdmg += (numCard(FIELD, CREATURES) - nhc) + 3;
 		}
 	    }
 	}
@@ -1102,13 +1102,15 @@ anything that is not a land*/
 		    WG_MANA--;
 		    w--;
 		} else//come back and make this more intelligent
-		 if (WU_MANA > 0) {
+		{
+		    if (WU_MANA > 0) {
 			WU_MANA--;
 			w--;
 		    } else if (WB_MANA > 0) {
 			WB_MANA--;
 			wb--;
 		    }
+		}
 
 	    }
 	}
