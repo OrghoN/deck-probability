@@ -6,11 +6,11 @@ import java.util.ArrayList;
 /**
  *
  * @author James Cannon
- * @version 22 December 2016 - 1:20 P.M.
+ * @version 29 December 2016 - 3:00 P.M.
  */
 public class Stats {
 
-    private static final double SIMULATIONS = 10000000;
+    private static final double SIMULATIONS = 1000000;
     private static double perfectGame = 0;//number of perfect games
     private static double perfectHand = 0;//number of perfect hands
     private static final int[] MULLS = new int[6];//array for keeping track of mulligans
